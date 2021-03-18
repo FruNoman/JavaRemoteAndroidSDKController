@@ -5,10 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DDMLibShell extends Shell{
+public class DDMLibShell extends Shell {
 
 
     private IDevice iDevice;
@@ -26,7 +28,7 @@ public class DDMLibShell extends Shell{
         }
         CollectingOutputReceiver receiver = new CollectingOutputReceiver();
         try {
-            iDevice.executeShellCommand(commandBuilder.toString(), receiver);
+            iDevice.executeShellCommand(commandBuilder.toString(), receiver, 60, TimeUnit.SECONDS);
         } catch (TimeoutException e) {
             e.printStackTrace();
         } catch (AdbCommandRejectedException e) {
@@ -36,16 +38,20 @@ public class DDMLibShell extends Shell{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return  receiver.getOutput();
+        return receiver.getOutput();
     }
 
     @Override
     public String executeBroadcast(String... command) throws Exception {
-        if (!execute("pm list packages -3").contains(REMOTE_PACKAGE)){
+        if (!execute("pm list packages -3").contains(REMOTE_PACKAGE)) {
             File apk = getApk();
-            iDevice.installPackage(apk.getAbsolutePath(),false);
+            iDevice.installPackage(apk.getAbsolutePath(), false);
+            execute("pm grant com.github.remotesdk android.permission.BLUETOOTH");
+            execute("pm grant com.github.remotesdk android.permission.BLUETOOTH_ADMIN");
+            execute("pm grant com.github.remotesdk android.permission.WRITE_EXTERNAL_STORAGE");
+            execute("pm grant com.github.remotesdk android.permission.READ_EXTERNAL_STORAGE");
         }
-        if(!execute("ps -A").contains(REMOTE_PACKAGE)){
+        if (!execute("ps -A").contains(REMOTE_PACKAGE)) {
             execute("am", "start", "-n", REMOTE_PACKAGE + "/.MainActivity");
             Thread.sleep(3000);
         }
@@ -57,7 +63,7 @@ public class DDMLibShell extends Shell{
         }
         CollectingOutputReceiver receiver = new CollectingOutputReceiver();
         try {
-            iDevice.executeShellCommand(commandBuilder.toString(), receiver);
+            iDevice.executeShellCommand(commandBuilder.toString(), receiver, 60, TimeUnit.SECONDS);
         } catch (TimeoutException e) {
             e.printStackTrace();
         } catch (AdbCommandRejectedException e) {
@@ -68,18 +74,18 @@ public class DDMLibShell extends Shell{
             e.printStackTrace();
         }
         String response = receiver.getOutput();
-        String output = response.split("\n")[1];
+        String output = response;
         Pattern r = Pattern.compile(ADAPTER_PATTERN);
         Matcher m = r.matcher(output);
         if (m.matches()) {
-            if (output.contains("result="+ERROR_CODE)) {
+            if (output.contains("result=" + ERROR_CODE)) {
                 ObjectMapper objectMapper = new ObjectMapper();
-                Exception exception = objectMapper.readValue(m.group(2), Exception.class);
+                Exception exception = objectMapper.readValue(m.group(3), Exception.class);
                 throw exception;
-            }else if (output.contains("result="+SUCCESS_CODE)){
-                return m.group(2);
+            } else if (output.contains("result=" + SUCCESS_CODE)) {
+                return m.group(3);
             }
-        }else if (output.contains("result="+EMPTY_BROADCAST_CODE)){
+        } else if (output.contains("result=" + EMPTY_BROADCAST_CODE)) {
             throw new Exception("Empty broadcast");
         }
         return response;

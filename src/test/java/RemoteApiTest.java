@@ -45,8 +45,10 @@ public class RemoteApiTest {
         device = devices.get(0);
     }
 
+
+
     @Test
-    public void starting() throws Exception {
+    public void starting2() throws Exception {
         DDMLibRemoteSdk DDMLibRemoteSDK = new DDMLibRemoteSdk(device);
         Bluetooth bluetooth = DDMLibRemoteSDK.getBluetooth();
         bluetooth.enable();
@@ -57,19 +59,38 @@ public class RemoteApiTest {
         Assert.assertEquals(bluetooth.getState(), Bluetooth.State.STATE_OFF);
     }
 
-    @Test
-    public void shellTest() throws Exception {
-        DDMLibShell shell = new DDMLibShell(device);
-        String output = shell.execute("am broadcast -a com.github.remotesdk.BLUETOOTH_REMOTE  --es bluetooth_remote getState");
-        System.out.println(output);
+    @Test()
+    public void starting1() throws Exception {
+        DDMLibRemoteSdk DDMLibRemoteSDK = new DDMLibRemoteSdk(device);
+        Bluetooth bluetooth = DDMLibRemoteSDK.getBluetooth();
+        bluetooth.enable();
+        Thread.sleep(1000);
+        Assert.assertEquals(bluetooth.getState(), Bluetooth.State.STATE_ON);
+        bluetooth.disable();
+        Thread.sleep(2000);
+        Assert.assertEquals(bluetooth.getState(), Bluetooth.State.STATE_OFF);
+        device.reboot("");
+        Thread.sleep(50000);
+        bluetooth.enable();
+        Thread.sleep(1000);
+        Assert.assertEquals(bluetooth.getState(), Bluetooth.State.STATE_ON);
     }
 
-    @Test
-    public void testExceptions() {
-        try {
-            throw new ArithmeticException();
-        } catch (Exception e) {
-            System.out.println(e.getClass());
-        }
+    @Test()
+    public void dualTest() throws Exception {
+        DDMLibRemoteSdk DDMLibRemoteSDK = new DDMLibRemoteSdk(device);
+        Bluetooth bluetooth = DDMLibRemoteSDK.getBluetooth();
+        bluetooth.enable();
+        Thread.sleep(1000);
+        Assert.assertEquals(bluetooth.getState(), Bluetooth.State.STATE_ON);
+
+        IDevice device2 = devices.get(1);
+        DDMLibRemoteSdk ddmLibRemoteSdksec = new DDMLibRemoteSdk(device2);
+        Bluetooth bluetoothSec = ddmLibRemoteSdksec.getBluetooth();
+        bluetoothSec.enable();
+        Thread.sleep(1000);
+        Assert.assertEquals(bluetoothSec.getState(), Bluetooth.State.STATE_ON);
+
     }
+
 }
