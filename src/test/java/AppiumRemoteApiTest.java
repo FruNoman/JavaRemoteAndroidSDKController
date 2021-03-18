@@ -1,4 +1,4 @@
-import com.github.frunoyman.adapters.Bluetooth;
+import com.github.frunoyman.adapters.bluetooth.Bluetooth;
 import com.github.frunoyman.controllers.AppiumRemoteSdk;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;

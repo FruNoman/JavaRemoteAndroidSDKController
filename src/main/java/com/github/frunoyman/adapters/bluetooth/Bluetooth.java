@@ -1,8 +1,15 @@
-package com.github.frunoyman.adapters;
+package com.github.frunoyman.adapters.bluetooth;
+
+import com.github.frunoyman.adapters.BaseAdapter;
+import com.github.frunoyman.shell.Shell;
 
 import java.util.List;
 
-public class Bluetooth {
+public class Bluetooth extends BaseAdapter {
+    public Bluetooth(Shell shell) {
+        super(shell);
+    }
+
     public void enable(){
 
     }
