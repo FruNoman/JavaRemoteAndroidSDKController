@@ -3,6 +3,7 @@ package com.github.frunoyman.shell;
 import com.android.ddmlib.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,6 +19,37 @@ public class DDMLibShell extends Shell{
 
 
     public String execute(String... command) throws Exception {
+        StringBuilder commandBuilder = new StringBuilder();
+        for (String var : command) {
+            commandBuilder.append(var);
+            commandBuilder.append(" ");
+        }
+        CollectingOutputReceiver receiver = new CollectingOutputReceiver();
+        try {
+            iDevice.executeShellCommand(commandBuilder.toString(), receiver);
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        } catch (AdbCommandRejectedException e) {
+            e.printStackTrace();
+        } catch (ShellCommandUnresponsiveException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return  receiver.getOutput();
+    }
+
+    @Override
+    public String executeBroadcast(String... command) throws Exception {
+        if (!execute("pm list packages -3").contains(REMOTE_PACKAGE)){
+            File apk = getApk();
+            iDevice.installPackage(apk.getAbsolutePath(),false);
+        }
+        if(!execute("ps -A").contains(REMOTE_PACKAGE)){
+            execute("am", "start", "-n", REMOTE_PACKAGE + "/.MainActivity");
+            Thread.sleep(3000);
+        }
+
         StringBuilder commandBuilder = new StringBuilder();
         for (String var : command) {
             commandBuilder.append(var);

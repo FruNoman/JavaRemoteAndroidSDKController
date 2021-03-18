@@ -33,7 +33,7 @@ public class AppiumRemoteApiTest {
         Thread.sleep(1000);
         Assert.assertEquals(bluetooth.getState(), Bluetooth.State.STATE_ON);
         bluetooth.disable();
-        Thread.sleep(2000);
+        Thread.sleep(1000);
         Assert.assertEquals(bluetooth.getState(), Bluetooth.State.STATE_OFF);
     }
 

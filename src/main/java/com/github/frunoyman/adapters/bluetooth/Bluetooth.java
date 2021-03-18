@@ -56,17 +56,17 @@ public class Bluetooth extends BaseAdapter {
     }
 
     public void enable() throws Exception {
-        shell.execute(ENABLE);
+        shell.executeBroadcast(ENABLE);
         logger.debug("bluetooth enable");
     }
 
     public void disable() throws Exception {
-        shell.execute(DISABLE);
+        shell.executeBroadcast(DISABLE);
         logger.debug("bluetooth disable");
     }
 
     public State getState() throws Exception {
-        State state = State.getState(Integer.parseInt(shell.execute(GET_STATE)));
+        State state = State.getState(Integer.parseInt(shell.executeBroadcast(GET_STATE)));
         logger.debug("bluetooth state ["+state.name()+"]");
         return state;
     }
