@@ -26,13 +26,15 @@ public class AppiumRemoteApiTest {
     }
 
     @Test
-    public void appiumTest() {
+    public void appiumTest() throws Exception {
         AppiumRemoteSdk remoteSdk = new AppiumRemoteSdk(driver);
         Bluetooth bluetooth = remoteSdk.getBluetooth();
         bluetooth.enable();
-        Assert.assertEquals(bluetooth.getState(), 0);
+        Thread.sleep(1000);
+        Assert.assertEquals(bluetooth.getState(), Bluetooth.State.STATE_ON);
         bluetooth.disable();
-        Assert.assertEquals(bluetooth.getState(), 0);
+        Thread.sleep(2000);
+        Assert.assertEquals(bluetooth.getState(), Bluetooth.State.STATE_OFF);
     }
 
     @After

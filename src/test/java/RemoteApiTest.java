@@ -1,7 +1,7 @@
 import com.android.ddmlib.*;
 import com.github.frunoyman.adapters.bluetooth.Bluetooth;
-import com.github.frunoyman.controllers.RemoteSdk;
-import com.github.frunoyman.shell.DDMLIBShell;
+import com.github.frunoyman.controllers.DDMLibRemoteSdk;
+import com.github.frunoyman.shell.DDMLibShell;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,18 +46,20 @@ public class RemoteApiTest {
     }
 
     @Test
-    public void starting() {
-        RemoteSdk remoteSDK = new RemoteSdk(device);
-        Bluetooth bluetooth = remoteSDK.getBluetooth();
+    public void starting() throws Exception {
+        DDMLibRemoteSdk DDMLibRemoteSDK = new DDMLibRemoteSdk(device);
+        Bluetooth bluetooth = DDMLibRemoteSDK.getBluetooth();
         bluetooth.enable();
-        Assert.assertEquals(bluetooth.getState(), 1);
+        Thread.sleep(1000);
+        Assert.assertEquals(bluetooth.getState(), Bluetooth.State.STATE_ON);
         bluetooth.disable();
-        Assert.assertEquals(bluetooth.getState(), 0);
+        Thread.sleep(2000);
+        Assert.assertEquals(bluetooth.getState(), Bluetooth.State.STATE_OFF);
     }
 
     @Test
     public void shellTest() throws Exception {
-        DDMLIBShell shell = new DDMLIBShell(device);
+        DDMLibShell shell = new DDMLibShell(device);
         String output = shell.execute("am broadcast -a com.github.remotesdk.BLUETOOTH_REMOTE  --es bluetooth_remote getState");
         System.out.println(output);
     }

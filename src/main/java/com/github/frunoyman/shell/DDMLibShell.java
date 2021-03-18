@@ -7,12 +7,12 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DDMLIBShell extends Shell{
+public class DDMLibShell extends Shell{
 
 
     private IDevice iDevice;
 
-    public DDMLIBShell(IDevice iDevice) {
+    public DDMLibShell(IDevice iDevice) {
         this.iDevice = iDevice;
     }
 
@@ -35,7 +35,8 @@ public class DDMLIBShell extends Shell{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String output = receiver.getOutput().split("\n")[1];
+        String response = receiver.getOutput();
+        String output = response.split("\n")[1];
         Pattern r = Pattern.compile(ADAPTER_PATTERN);
         Matcher m = r.matcher(output);
         if (m.matches()) {
@@ -43,10 +44,17 @@ public class DDMLIBShell extends Shell{
                 ObjectMapper objectMapper = new ObjectMapper();
                 Exception exception = objectMapper.readValue(m.group(2), Exception.class);
                 throw exception;
-            }else {
+            }else if (output.contains("result="+SUCCESS_CODE)){
                 return m.group(2);
             }
+        }else if (output.contains("result="+EMPTY_BROADCAST_CODE)){
+            throw new Exception("Empty broadcast");
         }
-        return receiver.getOutput();
+        return response;
+    }
+
+    @Override
+    public String getSerial() {
+        return iDevice.getSerialNumber();
     }
 }
