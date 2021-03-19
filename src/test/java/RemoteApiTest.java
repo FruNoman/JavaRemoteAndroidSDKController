@@ -57,6 +57,7 @@ public class RemoteApiTest {
         bluetooth.disable();
         Thread.sleep(2000);
         Assert.assertEquals(bluetooth.getState(), Bluetooth.State.STATE_OFF);
+        System.out.println(bluetooth.getAddress());
     }
 
     @Test()
@@ -83,6 +84,10 @@ public class RemoteApiTest {
         bluetooth.enable();
         Thread.sleep(1000);
         Assert.assertEquals(bluetooth.getState(), Bluetooth.State.STATE_ON);
+        System.out.println(bluetooth.getAddress());
+        bluetooth.disable();
+        Thread.sleep(1000);
+        Assert.assertEquals(bluetooth.getState(), Bluetooth.State.STATE_OFF);
 
         IDevice device2 = devices.get(1);
         DDMLibRemoteSdk ddmLibRemoteSdksec = new DDMLibRemoteSdk(device2);
@@ -90,7 +95,20 @@ public class RemoteApiTest {
         bluetoothSec.enable();
         Thread.sleep(1000);
         Assert.assertEquals(bluetoothSec.getState(), Bluetooth.State.STATE_ON);
+        System.out.println(bluetoothSec.getAddress());
+        bluetoothSec.disable();
+        Thread.sleep(1000);
+        Assert.assertEquals(bluetoothSec.getState(), Bluetooth.State.STATE_OFF);
 
+
+    }
+
+    @Test
+    public void discoverableTest() throws Exception {
+        DDMLibRemoteSdk DDMLibRemoteSDK = new DDMLibRemoteSdk(device);
+        Bluetooth bluetooth = DDMLibRemoteSDK.getBluetooth();
+        bluetooth.discoverable(200);
+        System.out.println(bluetooth.getAddress());
     }
 
 }

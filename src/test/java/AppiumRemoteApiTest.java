@@ -35,6 +35,7 @@ public class AppiumRemoteApiTest {
         bluetooth.disable();
         Thread.sleep(1000);
         Assert.assertEquals(bluetooth.getState(), Bluetooth.State.STATE_OFF);
+        System.out.println(bluetooth.getAddress());
     }
 
     @After

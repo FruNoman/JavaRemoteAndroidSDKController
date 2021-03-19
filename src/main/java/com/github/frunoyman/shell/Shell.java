@@ -15,7 +15,10 @@ public abstract class Shell {
             "android.permission.BLUETOOTH",
             "android.permission.BLUETOOTH_ADMIN",
             "android.permission.WRITE_EXTERNAL_STORAGE",
-            "android.permission.READ_EXTERNAL_STORAGE"
+            "android.permission.READ_EXTERNAL_STORAGE",
+            "android.permission.ACCESS_COARSE_LOCATION",
+            "android.permission.ACCESS_FINE_LOCATION",
+            "android.permission.ACCESS_BACKGROUND_LOCATION"
     };
 
     public abstract String execute(String... command) throws Exception;
