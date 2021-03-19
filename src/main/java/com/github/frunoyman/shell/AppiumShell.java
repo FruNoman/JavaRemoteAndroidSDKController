@@ -3,6 +3,7 @@ package com.github.frunoyman.shell;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.remote.MobileCapabilityType;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.util.HashMap;
@@ -11,10 +12,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AppiumShell extends Shell {
+    private Logger logger;
     private AndroidDriver driver;
+    private String[] permissions = new String[]{
+            "android.permission.BLUETOOTH",
+            "android.permission.BLUETOOTH_ADMIN",
+            "android.permission.WRITE_EXTERNAL_STORAGE",
+            "android.permission.READ_EXTERNAL_STORAGE"
+    };
 
     public AppiumShell(AndroidDriver driver) {
         this.driver = driver;
+        logger = Logger.getLogger(AppiumShell.class.getName() + "] [" + getSerial());
+
     }
 
     @Override
@@ -35,6 +45,7 @@ public class AppiumShell extends Shell {
             throw new Exception("Pls install RemoteController apk");
         }
         if(!execute("ps -A").contains(REMOTE_PACKAGE)){
+            logger.debug("Remote controller was not running, starting ...");
             execute("am", "start", "-n", REMOTE_PACKAGE + "/.MainActivity");
             Thread.sleep(3000);
         }
@@ -45,22 +56,21 @@ public class AppiumShell extends Shell {
         }
         Map<String, Object> args = new HashMap<>();
         args.put("command", commandBuilder.toString());
-        String response = driver.executeScript("mobile: shell", args).toString();
-        String output = response.split("\n")[1];
+        String output = driver.executeScript("mobile: shell", args).toString();
         Pattern r = Pattern.compile(ADAPTER_PATTERN);
         Matcher m = r.matcher(output);
         if (m.matches()) {
             if (output.contains("result=" + ERROR_CODE)) {
                 ObjectMapper objectMapper = new ObjectMapper();
-                Exception exception = objectMapper.readValue(m.group(2), Exception.class);
+                Exception exception = objectMapper.readValue(m.group(3), Exception.class);
                 throw exception;
             } else {
-                return m.group(2);
+                return m.group(3);
             }
         }else if (output.contains("result="+EMPTY_BROADCAST_CODE)){
             throw new Exception("Empty broadcast");
         }
-        return response;
+        return output;
     }
 
     @Override
