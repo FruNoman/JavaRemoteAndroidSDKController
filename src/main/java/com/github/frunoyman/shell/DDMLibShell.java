@@ -15,12 +15,7 @@ import java.util.regex.Pattern;
 public class DDMLibShell extends Shell {
     private Logger logger;
     private IDevice iDevice;
-    private String[] permissions = new String[]{
-            "android.permission.BLUETOOTH",
-            "android.permission.BLUETOOTH_ADMIN",
-            "android.permission.WRITE_EXTERNAL_STORAGE",
-            "android.permission.READ_EXTERNAL_STORAGE"
-    };
+
 
     public DDMLibShell(IDevice iDevice) {
         this.iDevice = iDevice;

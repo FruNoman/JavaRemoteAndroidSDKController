@@ -11,6 +11,12 @@ public abstract class Shell {
     protected final int ERROR_CODE = 123;
     protected final int SUCCESS_CODE = 373;
     protected final int EMPTY_BROADCAST_CODE = 0;
+    protected String[] permissions = new String[]{
+            "android.permission.BLUETOOTH",
+            "android.permission.BLUETOOTH_ADMIN",
+            "android.permission.WRITE_EXTERNAL_STORAGE",
+            "android.permission.READ_EXTERNAL_STORAGE"
+    };
 
     public abstract String execute(String... command) throws Exception;
 

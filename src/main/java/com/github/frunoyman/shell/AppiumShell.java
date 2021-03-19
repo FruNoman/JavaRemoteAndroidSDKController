@@ -2,6 +2,8 @@ package com.github.frunoyman.shell;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.appmanagement.AndroidInstallApplicationOptions;
+import io.appium.java_client.appmanagement.BaseInstallApplicationOptions;
 import io.appium.java_client.remote.MobileCapabilityType;
 import org.apache.log4j.Logger;
 
@@ -14,12 +16,6 @@ import java.util.regex.Pattern;
 public class AppiumShell extends Shell {
     private Logger logger;
     private AndroidDriver driver;
-    private String[] permissions = new String[]{
-            "android.permission.BLUETOOTH",
-            "android.permission.BLUETOOTH_ADMIN",
-            "android.permission.WRITE_EXTERNAL_STORAGE",
-            "android.permission.READ_EXTERNAL_STORAGE"
-    };
 
     public AppiumShell(AndroidDriver driver) {
         this.driver = driver;
@@ -42,7 +38,14 @@ public class AppiumShell extends Shell {
     @Override
     public String executeBroadcast(String... command) throws Exception {
         if (!execute("pm list packages -3").contains(REMOTE_PACKAGE)){
-            throw new Exception("Pls install RemoteController apk");
+            logger.debug("Remote controller apk was not found, installing ...");
+            File apk = getApk();
+            AndroidInstallApplicationOptions options = new AndroidInstallApplicationOptions();
+            options.withGrantPermissionsEnabled();
+            driver.installApp(apk.getAbsolutePath(),options);
+            if (!execute("pm list packages -3").contains(REMOTE_PACKAGE)) {
+                throw new Exception("Pls install RemoteController apk manually");
+            }
         }
         if(!execute("ps -A").contains(REMOTE_PACKAGE)){
             logger.debug("Remote controller was not running, starting ...");
