@@ -4,6 +4,7 @@ import com.github.frunoyman.adapters.BaseAdapter;
 import com.github.frunoyman.shell.Shell;
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,7 +30,19 @@ public class Bluetooth extends BaseAdapter {
     private final String GET_ADDRESS = "dumpsys bluetooth_manager";
 
     private final String DISCOVERABLE = AM_COMMAND
-            +"discoverable,";
+            + "discoverable,";
+    private final String SET_NAME = AM_COMMAND
+            + "setName,";
+    private final String GET_NAME = AM_COMMAND
+            + "getName";
+    private final String START_DISCOVERY = AM_COMMAND
+            + "startDiscovery";
+    private final String CANCEL_DISCOVERY = AM_COMMAND
+            + "cancelDiscovery";
+    private final String PAIR = AM_COMMAND
+            + "pairDevice";
+    private final String GET_DISCOVERED_DEVICES = AM_COMMAND
+            + "getDiscoveredDevices";
 
 
     public Bluetooth(Shell shell) {
@@ -75,7 +88,7 @@ public class Bluetooth extends BaseAdapter {
 
     public State getState() throws Exception {
         State state = State.getState(Integer.parseInt(shell.executeBroadcast(GET_STATE)));
-        logger.debug("bluetooth state ["+state.name()+"]");
+        logger.debug("bluetooth state [" + state.name() + "]");
         return state;
     }
 
@@ -85,46 +98,68 @@ public class Bluetooth extends BaseAdapter {
         Pattern r = Pattern.compile(BLUETOOTH_ADDRESS_PATTERN);
         Matcher m = r.matcher(output);
         if (m.matches()) {
-            address= m.group(1);
+            address = m.group(1);
         }
-        logger.debug("bluetooth address ["+address+"]");
+        logger.debug("bluetooth address [" + address + "]");
         return address;
     }
 
     public void discoverable(int seconds) throws Exception {
-        shell.executeBroadcast(DISCOVERABLE+seconds);
-        logger.debug("bluetooth discoverable time ["+seconds+"]");
+        shell.executeBroadcast(DISCOVERABLE + seconds);
+        logger.debug("bluetooth discoverable time [" + seconds + "]");
     }
 
     public void discoverable() throws Exception {
         discoverable(120);
     }
 
+    public String getName() throws Exception {
+        String name = shell.executeBroadcast(GET_NAME);
+        logger.debug("bluetooth get name [" + name + "]");
+        return name;
+    }
+
+    public boolean setName(String name) throws Exception {
+        boolean success = Boolean.parseBoolean(shell.executeBroadcast(SET_NAME + "\""+name.replace(" ","\\ ")+"\""));
+        logger.debug("bluetooth set name [" + name + "] return [" + success + "]");
+        return success;
+    }
+
+    public boolean startDiscovery() throws Exception {
+        boolean success = Boolean.parseBoolean(shell.executeBroadcast(START_DISCOVERY));
+        logger.debug("bluetooth start discovery");
+        return success;
+    }
+
+    public boolean cancelDiscovery() throws Exception {
+        boolean success = Boolean.parseBoolean(shell.executeBroadcast(CANCEL_DISCOVERY));
+        logger.debug("bluetooth cancel discovery");
+        return success;
+    }
+
+    public boolean pair(String address) throws Exception {
+        boolean success = Boolean.parseBoolean(shell.executeBroadcast(PAIR + address));
+        logger.debug("bluetooth pair device [" + address + "] return [" + success + "]");
+        return success;
+    }
+
+    public List<BluetoothDevice> getDiscoveredBluetoothDevices() throws Exception {
+        List<BluetoothDevice> devices = new ArrayList<>();
+        String result = shell.executeBroadcast(
+                GET_DISCOVERED_DEVICES
+        );
+        if (!result.isEmpty()) {
+            for (String address : result.split(",")) {
+                devices.add(new BluetoothDevice(shell, address));
+            }
+        }
+        return devices;
+    }
+
     public int getScanMode() {
         return 0;
     }
 
-    public String getName() {
-        return "";
-    }
-
-    public void setName() {
-
-    }
-
-
-
-    public void startDiscovery() {
-
-    }
-
-    public void cancelDiscovery() {
-
-    }
-
-    public void pair(String address) {
-
-    }
 
     public List<BluetoothDevice> getPairedDevices() {
         return null;

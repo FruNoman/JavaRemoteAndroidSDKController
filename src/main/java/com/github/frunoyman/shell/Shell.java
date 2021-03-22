@@ -18,7 +18,11 @@ public abstract class Shell {
             "android.permission.READ_EXTERNAL_STORAGE",
             "android.permission.ACCESS_COARSE_LOCATION",
             "android.permission.ACCESS_FINE_LOCATION",
-            "android.permission.ACCESS_BACKGROUND_LOCATION"
+            "android.permission.ACCESS_BACKGROUND_LOCATION",
+            "android.permission.BLUETOOTH_PRIVILEGED",
+            "android.permission.ACCESS_MEDIA_LOCATION",
+            "android.permission.ACCESS_LOCATION"
+
     };
 
     public abstract String execute(String... command) throws Exception;

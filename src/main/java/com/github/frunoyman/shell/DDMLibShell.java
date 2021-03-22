@@ -49,7 +49,7 @@ public class DDMLibShell extends Shell {
         if (!execute("pm list packages -3").contains(REMOTE_PACKAGE)) {
             logger.debug("Remote controller apk was not found, installing ...");
             File apk = getApk();
-            iDevice.installPackage(apk.getAbsolutePath(), false);
+            iDevice.installPackage(apk.getAbsolutePath(), false,"-g");
             for (String permission:permissions){
                 execute("pm grant com.github.remotesdk "+permission);
             }
@@ -58,6 +58,7 @@ public class DDMLibShell extends Shell {
             logger.debug("Remote controller was not running, starting ...");
             execute("am", "start", "-n", REMOTE_PACKAGE + "/.MainActivity");
             Thread.sleep(3000);
+            execute("input keyevent KEYCODE_HOME");
         }
 
         StringBuilder commandBuilder = new StringBuilder();

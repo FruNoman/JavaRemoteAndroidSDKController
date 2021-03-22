@@ -3,6 +3,8 @@ package com.github.frunoyman.shell;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.appmanagement.AndroidInstallApplicationOptions;
+import io.appium.java_client.android.nativekey.AndroidKey;
+import io.appium.java_client.android.nativekey.KeyEvent;
 import io.appium.java_client.appmanagement.BaseInstallApplicationOptions;
 import io.appium.java_client.remote.MobileCapabilityType;
 import org.apache.log4j.Logger;
@@ -51,6 +53,7 @@ public class AppiumShell extends Shell {
             logger.debug("Remote controller was not running, starting ...");
             execute("am", "start", "-n", REMOTE_PACKAGE + "/.MainActivity");
             Thread.sleep(3000);
+            driver.pressKey(new KeyEvent(AndroidKey.HOME));
         }
         StringBuilder commandBuilder = new StringBuilder();
         for (String var : command) {
