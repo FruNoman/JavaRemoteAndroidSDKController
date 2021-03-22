@@ -10,4 +10,8 @@ public class BluetoothDevice extends BaseAdapter {
         super(shell);
         this.address = address;
     }
+
+    public String getAddress() {
+        return address;
+    }
 }

@@ -120,7 +120,7 @@ public class Bluetooth extends BaseAdapter {
     }
 
     public boolean setName(String name) throws Exception {
-        boolean success = Boolean.parseBoolean(shell.executeBroadcast(SET_NAME + "\""+name.replace(" ","\\ ")+"\""));
+        boolean success = Boolean.parseBoolean(shell.executeBroadcast(SET_NAME  +"'"+name+"'"));
         logger.debug("bluetooth set name [" + name + "] return [" + success + "]");
         return success;
     }

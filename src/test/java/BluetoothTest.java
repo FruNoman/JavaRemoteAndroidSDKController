@@ -1,5 +1,6 @@
 import com.android.ddmlib.*;
 import com.github.frunoyman.adapters.bluetooth.Bluetooth;
+import com.github.frunoyman.adapters.bluetooth.BluetoothDevice;
 import com.github.frunoyman.controllers.DDMLibRemoteSdk;
 import com.github.frunoyman.shell.DDMLibShell;
 import com.github.frunoyman.waiter.RemoteExpectedConditions;
@@ -137,15 +138,15 @@ public class BluetoothTest {
 
         String prevName = bluetooth.getName();
 
-        bluetooth.setName("TestDevice");
+        bluetooth.setName("TestDevice mama");
 
         waiter.until(
-                RemoteExpectedConditions.bluetoothName("TestDevice")
+                RemoteExpectedConditions.bluetoothName("TestDevice mama")
         );
 
         Assert.assertEquals(
                 bluetooth.getName(),
-                "TestDevice"
+                "TestDevice mama"
         );
 
         bluetooth.setName(prevName);
@@ -158,6 +159,33 @@ public class BluetoothTest {
                 bluetooth.getName(),
                 prevName
         );
+    }
+
+    @Test
+    public void discoveryBluetoothDevices() throws Exception {
+        bluetooth.enable();
+
+        waiter.until(
+                RemoteExpectedConditions.bluetoothState(Bluetooth.State.STATE_ON)
+        );
+
+        Assert.assertEquals(
+                bluetooth.getState(),
+                Bluetooth.State.STATE_ON
+        );
+
+        bluetooth.startDiscovery();
+
+        Thread.sleep(10000);
+
+        bluetooth.cancelDiscovery();
+
+        List<BluetoothDevice> devices = bluetooth.getDiscoveredBluetoothDevices();
+
+        for (BluetoothDevice device:devices){
+            System.out.println(device.getAddress());
+        }
+
     }
 
 }
