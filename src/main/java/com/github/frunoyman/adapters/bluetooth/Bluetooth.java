@@ -395,18 +395,10 @@ public class Bluetooth extends BaseAdapter {
         return pairState;
     }
 
-    public BluetoothDevice.PairState getDevicePairState(BluetoothDevice device) throws Exception {
-        return getDevicePairState(device.getAddress());
-    }
-
     public String getDeviceName(String address) throws Exception {
         String result = shell.executeBroadcast(GET_DEVICE_NAME + address);
         logger.debug("get device name [" + result + "]");
         return result;
-    }
-
-    public String getDeviceName(BluetoothDevice device) throws Exception {
-        return getDeviceName(device.getAddress());
     }
 
     public BluetoothDevice.Type getDeviceType(String address) throws Exception {
@@ -427,9 +419,4 @@ public class Bluetooth extends BaseAdapter {
         logger.debug("device cancel pairing [" + address + "]");
         return result;
     }
-
-    public BluetoothDevice.Type getDeviceType(BluetoothDevice device) throws Exception {
-        return getDeviceType(device.getAddress());
-    }
-
 }

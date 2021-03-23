@@ -142,7 +142,7 @@ public class BluetoothTest {
                 Bluetooth.State.STATE_ON
         );
 
-        bluetooth.startDiscoverable(200);
+        bluetooth.startDiscoverable(120);
 
         waiter.until(
                 BluetoothExpectedConditions.discoverable()
@@ -157,7 +157,13 @@ public class BluetoothTest {
                 Bluetooth.ScanMode.SCAN_MODE_CONNECTABLE_DISCOVERABLE
         );
 
+        bluetooth.getDiscoverableTimeout();
+
         bluetooth.cancelDiscoverable();
+
+        waiter.until(
+                BluetoothExpectedConditions.stopDiscoverable()
+        );
 
         Assert.assertFalse(
                 bluetooth.isDiscoverable()
@@ -288,28 +294,4 @@ public class BluetoothTest {
             }
         }
     }
-
-    @Test
-    public void removePairingTest() throws Exception {
-        bluetooth.enable();
-
-        waiter.until(
-                BluetoothExpectedConditions.state(Bluetooth.State.STATE_ON)
-        );
-
-        Assert.assertEquals(
-                bluetooth.getState(),
-                Bluetooth.State.STATE_ON
-        );
-
-        bluetooth.pair("C0:10:B1:36:68:47");
-
-        waiter.until(
-                BluetoothExpectedConditions.connectionState(Bluetooth.ConnectedState.STATE_CONNECTED)
-        );
-
-        bluetooth.removeAllPairedDevices();
-    }
-
-
 }

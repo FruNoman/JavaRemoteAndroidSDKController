@@ -1,5 +1,6 @@
 import com.github.frunoyman.adapters.bluetooth.Bluetooth;
 import com.github.frunoyman.adapters.bluetooth.BluetoothDevice;
+import com.github.frunoyman.adapters.bluetooth.BluetoothProfile;
 import com.github.frunoyman.controllers.AppiumRemoteSdk;
 import com.github.frunoyman.waiter.BluetoothExpectedConditions;
 import com.github.frunoyman.waiter.RemoteWaiter;
@@ -42,6 +43,56 @@ public class AppiumBluetoothTest {
                 BluetoothExpectedConditions.state(Bluetooth.State.STATE_ON)
         );
 
+        waiter.until(
+                BluetoothExpectedConditions.enabled()
+        );
+
+        Assert.assertEquals(
+                bluetooth.getState(),
+                Bluetooth.State.STATE_ON
+        );
+
+        Assert.assertTrue(
+                bluetooth.isEnabled()
+        );
+
+        bluetooth.disable();
+
+        waiter.until(
+                BluetoothExpectedConditions.state(Bluetooth.State.STATE_OFF)
+        );
+
+        Assert.assertEquals(
+                bluetooth.getState(),
+                Bluetooth.State.STATE_OFF
+        );
+
+        Assert.assertFalse(
+                bluetooth.isEnabled()
+        );
+    }
+
+    @Test()
+    public void bluetoothReboot() throws Exception {
+        bluetooth.enable();
+
+        waiter.until(
+                BluetoothExpectedConditions.state(Bluetooth.State.STATE_ON)
+        );
+
+        Assert.assertEquals(
+                bluetooth.getState(),
+                Bluetooth.State.STATE_ON
+        );
+
+//        device.reboot("");
+
+        Thread.sleep(50000);
+
+        waiter.until(
+                BluetoothExpectedConditions.state(Bluetooth.State.STATE_ON)
+        );
+
         Assert.assertEquals(
                 bluetooth.getState(),
                 Bluetooth.State.STATE_ON
@@ -59,25 +110,51 @@ public class AppiumBluetoothTest {
         );
     }
 
-    @Test()
-    public void bluetoothReboot() throws Exception {
-        bluetooth.enable();
-        Thread.sleep(1000);
-        Assert.assertEquals(bluetooth.getState(), Bluetooth.State.STATE_ON);
-        bluetooth.disable();
-        Thread.sleep(2000);
-        Assert.assertEquals(bluetooth.getState(), Bluetooth.State.STATE_OFF);
-        Runtime.getRuntime().exec("adb reboot");
-        Thread.sleep(50000);
-        bluetooth.enable();
-        Thread.sleep(1000);
-        Assert.assertEquals(bluetooth.getState(), Bluetooth.State.STATE_ON);
-    }
-
     @Test
     public void bluetoothDiscoverable() throws Exception {
-        bluetooth.startDiscoverable(200);
-        System.out.println(bluetooth.getAddress());
+        bluetooth.enable();
+
+        waiter.until(
+                BluetoothExpectedConditions.state(Bluetooth.State.STATE_ON)
+        );
+
+        Assert.assertEquals(
+                bluetooth.getState(),
+                Bluetooth.State.STATE_ON
+        );
+
+        bluetooth.startDiscoverable(120);
+
+        waiter.until(
+                BluetoothExpectedConditions.discoverable()
+        );
+
+        Assert.assertTrue(
+                bluetooth.isDiscoverable()
+        );
+
+        Assert.assertEquals(
+                bluetooth.getScanMode(),
+                Bluetooth.ScanMode.SCAN_MODE_CONNECTABLE_DISCOVERABLE
+        );
+
+        bluetooth.getDiscoverableTimeout();
+
+        bluetooth.cancelDiscoverable();
+
+        waiter.until(
+                BluetoothExpectedConditions.stopDiscoverable()
+        );
+
+        Assert.assertFalse(
+                bluetooth.isDiscoverable()
+        );
+
+        Assert.assertEquals(
+                bluetooth.getScanMode(),
+                Bluetooth.ScanMode.SCAN_MODE_NONE
+        );
+
     }
 
     @Test
@@ -95,15 +172,15 @@ public class AppiumBluetoothTest {
 
         String prevName = bluetooth.getName();
 
-        bluetooth.setName("TestDevice kaka");
+        bluetooth.setName("TestDevice mama");
 
         waiter.until(
-                BluetoothExpectedConditions.name("TestDevice kaka")
+                BluetoothExpectedConditions.name("TestDevice mama")
         );
 
         Assert.assertEquals(
                 bluetooth.getName(),
-                "TestDevice kaka"
+                "TestDevice mama"
         );
 
         bluetooth.setName(prevName);
@@ -133,16 +210,70 @@ public class AppiumBluetoothTest {
 
         bluetooth.startDiscovery();
 
-        Thread.sleep(10000);
+        waiter.until(
+                BluetoothExpectedConditions.discovering()
+        );
+
+        Thread.sleep(6000);
+
+//        waiter.until(
+//                BluetoothExpectedConditions.discoveredDevice("74:65:50:80:AC:97")
+//        );
 
         bluetooth.cancelDiscovery();
+
+        waiter.until(
+                BluetoothExpectedConditions.stopDiscovering()
+        );
+
 
         List<BluetoothDevice> devices = bluetooth.getDiscoveredBluetoothDevices();
 
         for (BluetoothDevice device:devices){
-            System.out.println(device.getAddress());
+            device.getPairState();
+            device.getName();
+            device.getBluetoothClass();
+            device.getType();
+            System.out.println("-----------------------");
         }
+    }
 
+    @Test
+    public void bluetoothSupportProfilesTest() throws Exception {
+        bluetooth.enable();
+
+        waiter.until(
+                BluetoothExpectedConditions.state(Bluetooth.State.STATE_ON)
+        );
+
+        Assert.assertEquals(
+                bluetooth.getState(),
+                Bluetooth.State.STATE_ON
+        );
+
+        for (BluetoothProfile.Type type:bluetooth.getSupportedProfiles()){
+            System.out.println(type);
+        }
+    }
+
+    @Test
+    public void bluetoothGetProfileConnectionStateTest() throws Exception {
+        bluetooth.enable();
+
+        waiter.until(
+                BluetoothExpectedConditions.state(Bluetooth.State.STATE_ON)
+        );
+
+        Assert.assertEquals(
+                bluetooth.getState(),
+                Bluetooth.State.STATE_ON
+        );
+
+        for (BluetoothProfile.Type type:bluetooth.getSupportedProfiles()){
+            if (type!=null) {
+                bluetooth.getProfileConnectionState(type);
+            }
+        }
     }
 
     @After
