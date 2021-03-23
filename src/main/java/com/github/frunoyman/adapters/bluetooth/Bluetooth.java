@@ -71,7 +71,7 @@ public class Bluetooth extends BaseAdapter {
     private final String GET_CONNECTION_STATE = AM_COMMAND
             + "getConnectionState";
     private final String GET_PROFILE_CONNECTION_STATE = AM_COMMAND
-            + "getProfileConnectionState";
+            + "getProfileConnectionState,";
 
 
     public Bluetooth(Shell shell) {
@@ -102,6 +102,32 @@ public class Bluetooth extends BaseAdapter {
                 }
             }
             return State.STATE_OFF;
+        }
+    }
+
+    public enum ConnectedState {
+        STATE_DISCONNECTED(0),
+        STATE_CONNECTING(1),
+        STATE_CONNECTED(2),
+        STATE_DISCONNECTING(3);
+
+        private int state;
+
+        ConnectedState(int state) {
+            this.state = state;
+        }
+
+        public int getState() {
+            return state;
+        }
+
+        public static ConnectedState getState(int state) {
+            for (ConnectedState states : values()) {
+                if (states.getState() == state) {
+                    return states;
+                }
+            }
+            return ConnectedState.STATE_DISCONNECTED;
         }
     }
 
@@ -144,7 +170,7 @@ public class Bluetooth extends BaseAdapter {
 
     public State getState() throws Exception {
         State state = State.getState(Integer.parseInt(shell.executeBroadcast(GET_STATE)));
-        logger.debug("bluetooth state [" + state.name() + "]");
+        logger.debug("bluetooth get state ["+state+"]");
         return state;
     }
 
@@ -156,17 +182,26 @@ public class Bluetooth extends BaseAdapter {
         if (m.matches()) {
             address = m.group(1);
         }
-        logger.debug("bluetooth address [" + address + "]");
+        logger.debug("bluetooth get address ["+address+"]");
         return address;
     }
 
-    public void discoverable(int seconds) throws Exception {
+    public void startDiscoverable(int seconds) throws Exception {
         shell.executeBroadcast(DISCOVERABLE + seconds);
-        logger.debug("bluetooth discoverable time [" + seconds + "]");
+        logger.debug("bluetooth start discoverable seconds ["+seconds+"]");
     }
 
-    public void discoverable() throws Exception {
-        discoverable(120);
+    public void cancelDiscoverable() throws Exception {
+        setScanMode(ScanMode.SCAN_MODE_NONE,0);
+        logger.debug("bluetooth cancel discoverable");
+    }
+
+    public boolean isDiscoverable() throws Exception {
+        return getScanMode() == ScanMode.SCAN_MODE_CONNECTABLE_DISCOVERABLE;
+    }
+
+    public void startDiscoverable() throws Exception {
+        startDiscoverable(120);
     }
 
     public String getName() throws Exception {
@@ -177,32 +212,32 @@ public class Bluetooth extends BaseAdapter {
 
     public boolean setName(String name) throws Exception {
         boolean success = Boolean.parseBoolean(shell.executeBroadcast(SET_NAME + "'" + name + "'"));
-        logger.debug("bluetooth set name [" + name + "] return [" + success + "]");
+        logger.debug("bluetooth set name");
         return success;
     }
 
     public boolean startDiscovery() throws Exception {
-        boolean success = Boolean.parseBoolean(shell.executeBroadcast(START_DISCOVERY));
-        logger.debug("bluetooth start discovery");
-        return success;
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(START_DISCOVERY));
+        logger.debug("bluetooth start discovery ["+result+"]");
+        return result;
     }
 
     public boolean cancelDiscovery() throws Exception {
-        boolean success = Boolean.parseBoolean(shell.executeBroadcast(CANCEL_DISCOVERY));
-        logger.debug("bluetooth cancel discovery");
-        return success;
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(CANCEL_DISCOVERY));
+        logger.debug("bluetooth cancel discovery ["+result+"]");
+        return result;
     }
 
     public boolean pair(String address) throws Exception {
-        boolean success = Boolean.parseBoolean(shell.executeBroadcast(PAIR + address));
-        logger.debug("bluetooth pair device [" + address + "] return [" + success + "]");
-        return success;
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(PAIR + address));
+        logger.debug("bluetooth pair device ["+address+"]");
+        return result;
     }
 
     public boolean setPairingConfirmation(String address, boolean confirmation) throws Exception {
-        boolean success = Boolean.parseBoolean(shell.executeBroadcast(SET_PAIRING_CONFIRMATION + address + "," + confirmation));
-        logger.debug("bluetooth set pairing confirmation for device [" + address + "] return [" + success + "]");
-        return success;
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(SET_PAIRING_CONFIRMATION + address + "," + confirmation));
+        logger.debug("bluetooth set pairing confirmation ["+address+"] confirmation ["+confirmation+"]");
+        return result;
     }
 
     public List<BluetoothDevice> getDiscoveredBluetoothDevices() throws Exception {
@@ -215,12 +250,13 @@ public class Bluetooth extends BaseAdapter {
                 devices.add(new BluetoothDevice(shell, address));
             }
         }
+        logger.debug("bluetooth get discovered devices");
         return devices;
     }
 
     public ScanMode getScanMode() throws Exception {
         ScanMode scanMode = ScanMode.getScanMode(Integer.parseInt(shell.executeBroadcast(GET_SCAN_MODE)));
-        logger.debug("bluetooth scan mode [" + scanMode.name() + "]");
+        logger.debug("bluetooth get scan mode ["+scanMode+"]");
         return scanMode;
     }
 
@@ -235,54 +271,56 @@ public class Bluetooth extends BaseAdapter {
                 devices.add(new BluetoothDevice(shell, address));
             }
         }
+        logger.debug("bluetooth get paired devices");
         return devices;
     }
 
     public BluetoothDevice getRemoteDevice(String address) throws Exception {
         BluetoothDevice device = new BluetoothDevice(shell, shell.executeBroadcast(GET_REMOTE_DEVICE + address));
-        logger.debug("bluetooth get device [" + address + "]");
+        logger.debug("bluetooth get device ["+address+"]");
         return device;
     }
 
     public boolean isEnabled() throws Exception {
-        boolean success = Boolean.parseBoolean(shell.executeBroadcast(IS_ENABLED));
-        logger.debug("bluetooth is enabled");
-        return success;
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(IS_ENABLED));
+        logger.debug("bluetooth is enabled ["+result+"]");
+        return result;
     }
 
     public boolean factoryReset() throws Exception {
-        boolean success = Boolean.parseBoolean(shell.executeBroadcast(FACTORY_RESET));
-        logger.debug("bluetooth factory reset");
-        return success;
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(FACTORY_RESET));
+        logger.debug("bluetooth factory reset ["+result+"]");
+        return result;
     }
 
     public BluetoothClass getBluetoothClass() throws Exception {
         int result = Integer.parseInt(shell.executeBroadcast(GET_BLUETOOTH_CLASS));
-        logger.debug("bluetooth get class");
-        return new BluetoothClass(result);
+        BluetoothClass bluetoothClass = new BluetoothClass(result);
+        logger.debug("bluetooth get class ["+bluetoothClass+"]");
+        return bluetoothClass;
     }
 
     public boolean setScanMode(ScanMode scanMode, long duration) throws Exception {
         boolean result = Boolean.parseBoolean(shell.executeBroadcast(SET_SCAN_MODE + scanMode.getScanMode() + "," + duration));
-        logger.debug("bluetooth set scan mode");
+        logger.debug("bluetooth set scan mode ["+scanMode+"] duration ["+duration+"]");
         return result;
     }
 
     public int getDiscoverableTimeout() throws Exception {
         int result = Integer.parseInt(shell.executeBroadcast(GET_DISCOVERABLE_TIMEOUT));
-        logger.debug("bluetooth get discoverable timeout");
+        logger.debug("bluetooth get discoverable timeout ["+result+"]");
         return result;
     }
 
     public boolean setDiscoverableTimeout(int seconds) throws Exception {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(SET_DISCOVERABLE_TIMEOUT+seconds));
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(SET_DISCOVERABLE_TIMEOUT + seconds));
         logger.debug("bluetooth set discoverable timeout ["+seconds+"]");
         return result;
     }
 
     public boolean isDiscovering() throws Exception {
         boolean result = Boolean.parseBoolean(shell.executeBroadcast(IS_DISCOVERING));
-        logger.debug("bluetooth is discovering");
+        logger.debug("bluetooth is discovering ["+result+"]");
         return result;
     }
 
@@ -296,6 +334,26 @@ public class Bluetooth extends BaseAdapter {
                 profiles.add(BluetoothProfile.Type.getConstant(Integer.parseInt(type)));
             }
         }
+        logger.debug("bluetooth get supported profiles");
         return profiles;
     }
+
+    public ConnectedState getConnectionState() throws Exception {
+        ConnectedState connectedState = ConnectedState.getState(Integer.parseInt(shell.executeBroadcast(GET_CONNECTION_STATE)));
+        logger.debug("bluetooth get connection state ["+connectedState+"]");
+        return connectedState;
+    }
+
+    public BluetoothProfile.State getProfileConnectionState(BluetoothProfile.Type type) throws Exception {
+        BluetoothProfile.State state = BluetoothProfile.State.getState(
+                Integer.parseInt(
+                        shell.executeBroadcast(GET_PROFILE_CONNECTION_STATE + type.getComstant()
+                        )
+                )
+        );
+        logger.debug("bluetooth get profile ["+type+"] connection state ["+state+"}");
+        return state;
+
+    }
+
 }

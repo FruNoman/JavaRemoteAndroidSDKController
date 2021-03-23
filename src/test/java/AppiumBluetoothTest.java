@@ -1,7 +1,7 @@
 import com.github.frunoyman.adapters.bluetooth.Bluetooth;
 import com.github.frunoyman.adapters.bluetooth.BluetoothDevice;
 import com.github.frunoyman.controllers.AppiumRemoteSdk;
-import com.github.frunoyman.waiter.RemoteExpectedConditions;
+import com.github.frunoyman.waiter.BluetoothExpectedConditions;
 import com.github.frunoyman.waiter.RemoteWaiter;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
@@ -39,7 +39,7 @@ public class AppiumBluetoothTest {
         bluetooth.enable();
 
         waiter.until(
-                RemoteExpectedConditions.bluetoothState(Bluetooth.State.STATE_ON)
+                BluetoothExpectedConditions.state(Bluetooth.State.STATE_ON)
         );
 
         Assert.assertEquals(
@@ -50,7 +50,7 @@ public class AppiumBluetoothTest {
         bluetooth.disable();
 
         waiter.until(
-                RemoteExpectedConditions.bluetoothState(Bluetooth.State.STATE_OFF)
+                BluetoothExpectedConditions.state(Bluetooth.State.STATE_OFF)
         );
 
         Assert.assertEquals(
@@ -76,7 +76,7 @@ public class AppiumBluetoothTest {
 
     @Test
     public void bluetoothDiscoverable() throws Exception {
-        bluetooth.discoverable(200);
+        bluetooth.startDiscoverable(200);
         System.out.println(bluetooth.getAddress());
     }
 
@@ -85,7 +85,7 @@ public class AppiumBluetoothTest {
         bluetooth.enable();
 
         waiter.until(
-                RemoteExpectedConditions.bluetoothState(Bluetooth.State.STATE_ON)
+                BluetoothExpectedConditions.state(Bluetooth.State.STATE_ON)
         );
 
         Assert.assertEquals(
@@ -98,7 +98,7 @@ public class AppiumBluetoothTest {
         bluetooth.setName("TestDevice kaka");
 
         waiter.until(
-                RemoteExpectedConditions.bluetoothName("TestDevice kaka")
+                BluetoothExpectedConditions.name("TestDevice kaka")
         );
 
         Assert.assertEquals(
@@ -109,7 +109,7 @@ public class AppiumBluetoothTest {
         bluetooth.setName(prevName);
 
         waiter.until(
-                RemoteExpectedConditions.bluetoothName(prevName)
+                BluetoothExpectedConditions.name(prevName)
         );
 
         Assert.assertEquals(
@@ -123,7 +123,7 @@ public class AppiumBluetoothTest {
         bluetooth.enable();
 
         waiter.until(
-                RemoteExpectedConditions.bluetoothState(Bluetooth.State.STATE_ON)
+                BluetoothExpectedConditions.state(Bluetooth.State.STATE_ON)
         );
 
         Assert.assertEquals(

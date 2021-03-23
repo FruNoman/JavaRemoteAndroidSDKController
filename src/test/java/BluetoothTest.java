@@ -1,9 +1,9 @@
 import com.android.ddmlib.*;
 import com.github.frunoyman.adapters.bluetooth.Bluetooth;
 import com.github.frunoyman.adapters.bluetooth.BluetoothDevice;
+import com.github.frunoyman.adapters.bluetooth.BluetoothProfile;
 import com.github.frunoyman.controllers.DDMLibRemoteSdk;
-import com.github.frunoyman.shell.DDMLibShell;
-import com.github.frunoyman.waiter.RemoteExpectedConditions;
+import com.github.frunoyman.waiter.BluetoothExpectedConditions;
 import com.github.frunoyman.waiter.RemoteWaiter;
 import org.junit.Assert;
 import org.junit.Before;
@@ -59,7 +59,11 @@ public class BluetoothTest {
         bluetooth.enable();
 
         waiter.until(
-                RemoteExpectedConditions.bluetoothState(Bluetooth.State.STATE_ON)
+                BluetoothExpectedConditions.state(Bluetooth.State.STATE_ON)
+        );
+
+        waiter.until(
+                BluetoothExpectedConditions.enabled()
         );
 
         Assert.assertEquals(
@@ -67,15 +71,23 @@ public class BluetoothTest {
                 Bluetooth.State.STATE_ON
         );
 
+        Assert.assertTrue(
+                bluetooth.isEnabled()
+        );
+
         bluetooth.disable();
 
         waiter.until(
-                RemoteExpectedConditions.bluetoothState(Bluetooth.State.STATE_OFF)
+                BluetoothExpectedConditions.state(Bluetooth.State.STATE_OFF)
         );
 
         Assert.assertEquals(
                 bluetooth.getState(),
                 Bluetooth.State.STATE_OFF
+        );
+
+        Assert.assertFalse(
+                bluetooth.isEnabled()
         );
     }
 
@@ -84,7 +96,7 @@ public class BluetoothTest {
         bluetooth.enable();
 
         waiter.until(
-                RemoteExpectedConditions.bluetoothState(Bluetooth.State.STATE_ON)
+                BluetoothExpectedConditions.state(Bluetooth.State.STATE_ON)
         );
 
         Assert.assertEquals(
@@ -97,7 +109,7 @@ public class BluetoothTest {
         Thread.sleep(50000);
 
         waiter.until(
-                RemoteExpectedConditions.bluetoothState(Bluetooth.State.STATE_ON)
+                BluetoothExpectedConditions.state(Bluetooth.State.STATE_ON)
         );
 
         Assert.assertEquals(
@@ -108,7 +120,7 @@ public class BluetoothTest {
         bluetooth.disable();
 
         waiter.until(
-                RemoteExpectedConditions.bluetoothState(Bluetooth.State.STATE_OFF)
+                BluetoothExpectedConditions.state(Bluetooth.State.STATE_OFF)
         );
 
         Assert.assertEquals(
@@ -119,8 +131,43 @@ public class BluetoothTest {
 
     @Test
     public void bluetoothDiscoverable() throws Exception {
-        bluetooth.discoverable(200);
-        System.out.println(bluetooth.getAddress());
+        bluetooth.enable();
+
+        waiter.until(
+                BluetoothExpectedConditions.state(Bluetooth.State.STATE_ON)
+        );
+
+        Assert.assertEquals(
+                bluetooth.getState(),
+                Bluetooth.State.STATE_ON
+        );
+
+        bluetooth.startDiscoverable(200);
+
+        waiter.until(
+                BluetoothExpectedConditions.discoverable()
+        );
+
+        Assert.assertTrue(
+                bluetooth.isDiscoverable()
+        );
+
+        Assert.assertEquals(
+                bluetooth.getScanMode(),
+                Bluetooth.ScanMode.SCAN_MODE_CONNECTABLE_DISCOVERABLE
+        );
+
+        bluetooth.cancelDiscoverable();
+
+        Assert.assertFalse(
+                bluetooth.isDiscoverable()
+        );
+
+        Assert.assertEquals(
+                bluetooth.getScanMode(),
+                Bluetooth.ScanMode.SCAN_MODE_NONE
+        );
+
     }
 
     @Test
@@ -128,7 +175,7 @@ public class BluetoothTest {
         bluetooth.enable();
 
         waiter.until(
-                RemoteExpectedConditions.bluetoothState(Bluetooth.State.STATE_ON)
+                BluetoothExpectedConditions.state(Bluetooth.State.STATE_ON)
         );
 
         Assert.assertEquals(
@@ -141,7 +188,7 @@ public class BluetoothTest {
         bluetooth.setName("TestDevice mama");
 
         waiter.until(
-                RemoteExpectedConditions.bluetoothName("TestDevice mama")
+                BluetoothExpectedConditions.name("TestDevice mama")
         );
 
         Assert.assertEquals(
@@ -152,7 +199,7 @@ public class BluetoothTest {
         bluetooth.setName(prevName);
 
         waiter.until(
-                RemoteExpectedConditions.bluetoothName(prevName)
+                BluetoothExpectedConditions.name(prevName)
         );
 
         Assert.assertEquals(
@@ -166,7 +213,7 @@ public class BluetoothTest {
         bluetooth.enable();
 
         waiter.until(
-                RemoteExpectedConditions.bluetoothState(Bluetooth.State.STATE_ON)
+                BluetoothExpectedConditions.state(Bluetooth.State.STATE_ON)
         );
 
         Assert.assertEquals(
@@ -176,15 +223,67 @@ public class BluetoothTest {
 
         bluetooth.startDiscovery();
 
-        Thread.sleep(10000);
+        waiter.until(
+                BluetoothExpectedConditions.discovering()
+        );
+
+        Thread.sleep(6000);
+
+//        waiter.until(
+//                BluetoothExpectedConditions.discoveredDevice("74:65:50:80:AC:97")
+//        );
 
         bluetooth.cancelDiscovery();
+
+        waiter.until(
+                BluetoothExpectedConditions.stopDiscovering()
+        );
+
 
         List<BluetoothDevice> devices = bluetooth.getDiscoveredBluetoothDevices();
 
         for (BluetoothDevice device:devices){
             System.out.println(device.getAddress());
         }
-
     }
+
+    @Test
+    public void bluetoothSupportProfilesTest() throws Exception {
+        bluetooth.enable();
+
+        waiter.until(
+                BluetoothExpectedConditions.state(Bluetooth.State.STATE_ON)
+        );
+
+        Assert.assertEquals(
+                bluetooth.getState(),
+                Bluetooth.State.STATE_ON
+        );
+
+        for (BluetoothProfile.Type type:bluetooth.getSupportedProfiles()){
+            System.out.println(type);
+        }
+    }
+
+    @Test
+    public void bluetoothGetProfileConnectionStateTest() throws Exception {
+        bluetooth.enable();
+
+        waiter.until(
+                BluetoothExpectedConditions.state(Bluetooth.State.STATE_ON)
+        );
+
+        Assert.assertEquals(
+                bluetooth.getState(),
+                Bluetooth.State.STATE_ON
+        );
+
+        for (BluetoothProfile.Type type:bluetooth.getSupportedProfiles()){
+            if (type!=null) {
+                bluetooth.getProfileConnectionState(type);
+            }
+        }
+    }
+
+
 }
