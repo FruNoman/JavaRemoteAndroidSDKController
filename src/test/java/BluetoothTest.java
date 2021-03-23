@@ -243,7 +243,11 @@ public class BluetoothTest {
         List<BluetoothDevice> devices = bluetooth.getDiscoveredBluetoothDevices();
 
         for (BluetoothDevice device:devices){
-            System.out.println(device.getAddress());
+            device.getPairState();
+            device.getName();
+            device.getBluetoothClass();
+            device.getType();
+            System.out.println("-----------------------");
         }
     }
 
@@ -283,6 +287,28 @@ public class BluetoothTest {
                 bluetooth.getProfileConnectionState(type);
             }
         }
+    }
+
+    @Test
+    public void removePairingTest() throws Exception {
+        bluetooth.enable();
+
+        waiter.until(
+                BluetoothExpectedConditions.state(Bluetooth.State.STATE_ON)
+        );
+
+        Assert.assertEquals(
+                bluetooth.getState(),
+                Bluetooth.State.STATE_ON
+        );
+
+        bluetooth.pair("C0:10:B1:36:68:47");
+
+        waiter.until(
+                BluetoothExpectedConditions.connectionState(Bluetooth.ConnectedState.STATE_CONNECTED)
+        );
+
+        bluetooth.removeAllPairedDevices();
     }
 
 
