@@ -102,8 +102,6 @@ public class WifiDDMLibTests {
 
         waiter.until(WifiExpectedConditions.savedNetwork("RNS_AES"));
 
-        waiter.until(WifiExpectedConditions.networkStatus("RNS_AES", WifiConfiguration.Status.DISABLED));
-
         wifi.enableNetwork(netId);
 
         waiter.until(WifiExpectedConditions.networkStatus("RNS_AES", WifiConfiguration.Status.ENABLED));
