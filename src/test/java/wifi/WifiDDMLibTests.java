@@ -2,10 +2,11 @@ package wifi;
 
 import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.IDevice;
-import com.github.frunoyman.adapters.bluetooth.Bluetooth;
 import com.github.frunoyman.adapters.wifi.Wifi;
+import com.github.frunoyman.adapters.wifi.WifiConfiguration;
 import com.github.frunoyman.controllers.DDMLibRemoteSdk;
 import com.github.frunoyman.waiter.RemoteWaiter;
+import com.github.frunoyman.waiter.WifiExpectedConditions;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,16 +58,79 @@ public class WifiDDMLibTests {
     @Test
     public void wifiEnableDisable() throws Exception {
         wifi.enable();
-        Thread.sleep(3000);
+
+        waiter.until(WifiExpectedConditions.enabled());
+
+        waiter.until(
+                WifiExpectedConditions.state(Wifi.State.WIFI_STATE_ENABLED
+                )
+        );
+
         Assert.assertEquals(
                 wifi.getState(),
                 Wifi.State.WIFI_STATE_ENABLED
         );
+
         wifi.disable();
-        Thread.sleep(3000);
+
+        waiter.until(WifiExpectedConditions.disabled());
+
+        waiter.until(
+                WifiExpectedConditions.state(
+                        Wifi.State.WIFI_STATE_DISABLED
+                )
+        );
+
         Assert.assertEquals(
                 wifi.getState(),
                 Wifi.State.WIFI_STATE_DISABLED
         );
+    }
+
+    @Test
+    public void addNetworkTest() throws Exception {
+        wifi.enable();
+
+        waiter.until(WifiExpectedConditions.enabled());
+
+        Assert.assertEquals(
+                wifi.getState(),
+                Wifi.State.WIFI_STATE_ENABLED
+        );
+
+        int netId = wifi.addNetwork("RNS_AES","12345678", WifiConfiguration.SecurityType.PASS);
+
+        waiter.until(WifiExpectedConditions.savedNetwork("RNS_AES"));
+
+        waiter.until(WifiExpectedConditions.networkStatus("RNS_AES", WifiConfiguration.Status.DISABLED));
+
+        wifi.enableNetwork(netId);
+
+        waiter.until(WifiExpectedConditions.networkStatus("RNS_AES", WifiConfiguration.Status.ENABLED));
+
+
+        Thread.sleep(5000);
+
+        for (WifiConfiguration configuration:wifi.getConfiguredNetworks()){
+            System.out.println(configuration);
+        }
+
+        wifi.disableNetwork(netId);
+
+        waiter.until(WifiExpectedConditions.networkStatus("RNS_AES", WifiConfiguration.Status.DISABLED));
+
+
+        for (WifiConfiguration configuration:wifi.getConfiguredNetworks()){
+            System.out.println(configuration);
+        }
+
+        wifi.removeNetwork(netId);
+
+        wifi.removeAllNetworks();
+
+        wifi.disable();
+
+        waiter.until(WifiExpectedConditions.disabled());
+
     }
 }

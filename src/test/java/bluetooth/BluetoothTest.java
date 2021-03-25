@@ -257,6 +257,8 @@ public class BluetoothTest {
             device.getType();
             System.out.println("-----------------------");
         }
+
+        bluetooth.factoryReset();
     }
 
     @Test
