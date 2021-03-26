@@ -93,12 +93,7 @@ public class WifiDDMLibTests {
 
         waiter.until(WifiExpectedConditions.enabled());
 
-        Assert.assertEquals(
-                wifi.getState(),
-                Wifi.State.WIFI_STATE_ENABLED
-        );
-
-        int netId = wifi.addNetwork("RNS_AES","12345678", WifiConfiguration.SecurityType.PASS);
+        int netId = wifi.addNetwork("RNS_AES", "12345678", WifiConfiguration.SecurityType.PASS);
 
         waiter.until(WifiExpectedConditions.savedNetwork("RNS_AES"));
 
@@ -109,7 +104,7 @@ public class WifiDDMLibTests {
 
         Thread.sleep(5000);
 
-        for (WifiConfiguration configuration:wifi.getConfiguredNetworks()){
+        for (WifiConfiguration configuration : wifi.getConfiguredNetworks()) {
             System.out.println(configuration);
         }
 
@@ -118,7 +113,7 @@ public class WifiDDMLibTests {
         waiter.until(WifiExpectedConditions.networkStatus("RNS_AES", WifiConfiguration.Status.DISABLED));
 
 
-        for (WifiConfiguration configuration:wifi.getConfiguredNetworks()){
+        for (WifiConfiguration configuration : wifi.getConfiguredNetworks()) {
             System.out.println(configuration);
         }
 
@@ -129,6 +124,46 @@ public class WifiDDMLibTests {
         wifi.disable();
 
         waiter.until(WifiExpectedConditions.disabled());
+    }
+
+    @Test
+    public void getApConfig() throws Exception {
+        wifi.startHotspotTethering();
+
+        waiter.until(WifiExpectedConditions.hotspotEnabled());
+
+        waiter.until(WifiExpectedConditions.hotspotState(Wifi.State.WIFI_AP_STATE_ENABLED));
+
+        System.out.println(wifi.getWifiHotspotConfiguration());
+
+        wifi.stopHotspotTethering();
+
+        waiter.until(WifiExpectedConditions.hotspotDisabled());
+
+        waiter.until(WifiExpectedConditions.hotspotState(Wifi.State.WIFI_AP_STATE_DISABLED));
+    }
+
+    @Test
+    public void setHotSpotConfig() throws Exception {
+        WifiConfiguration pass = new WifiConfiguration("Mama", "sukaSomeBliat", WifiConfiguration.SecurityType.PASS);
+
+        wifi.setWifiApConfiguration(pass);
+
+        Thread.sleep(4000);
+
+        Assert.assertEquals(pass, wifi.getWifiHotspotConfiguration());
+
+        System.out.println(wifi.getWifiHotspotConfiguration());
+
+        WifiConfiguration open = new WifiConfiguration("KAKA", "", WifiConfiguration.SecurityType.OPEN);
+
+        wifi.setWifiApConfiguration(open);
+
+        Thread.sleep(4000);
+
+        Assert.assertEquals(open, wifi.getWifiHotspotConfiguration());
+
+        System.out.println(wifi.getWifiHotspotConfiguration());
 
     }
 }

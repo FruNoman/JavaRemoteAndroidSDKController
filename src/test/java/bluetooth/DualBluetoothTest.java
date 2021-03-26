@@ -67,8 +67,7 @@ public class DualBluetoothTest {
         bluetooth2.enable();
         System.out.println(bluetooth.getAddress());
         System.out.println(bluetooth2.getAddress());
-        bluetooth.setPairingConfirmation(bluetooth2.getAddress(),true);
-        bluetooth2.setPairingConfirmation(bluetooth.getAddress(),true);
+
 
     }
 }

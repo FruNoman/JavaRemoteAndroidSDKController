@@ -1,7 +1,11 @@
 package com.github.frunoyman.shell;
 
 import com.android.ddmlib.*;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.github.frunoyman.adapters.bluetooth.Bluetooth;
 import org.apache.log4j.Logger;
 
@@ -84,6 +88,10 @@ public class DDMLibShell extends Shell {
         if (m.matches()) {
             if (output.contains("result=" + ERROR_CODE)) {
                 ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.configure(SerializationFeature.FAIL_ON_SELF_REFERENCES, false);
+                objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
+                objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
                 Exception exception = objectMapper.readValue(m.group(3), Exception.class);
                 throw exception;
             } else if (output.contains("result=" + SUCCESS_CODE)) {

@@ -22,8 +22,8 @@ public class WifiConfiguration {
         this.additionalProperties.put(name, value);
     }
 
-    private String SSID;
-    private String preSharedKey;
+    private String SSID="";
+    private String preSharedKey="";
     private int networkId;
     private int status;
     private int authType;
@@ -39,7 +39,11 @@ public class WifiConfiguration {
     }
 
     public String getSSID() {
-        return SSID.replaceAll("\"", "");
+        if (SSID!=null){
+            return SSID.replaceAll("\"", "");
+        }else {
+            return SSID;
+        }
     }
 
     public void setSSID(String SSID) {
@@ -47,7 +51,12 @@ public class WifiConfiguration {
     }
 
     public String getPreSharedKey() {
-        return preSharedKey;
+        if (preSharedKey!=null){
+            return preSharedKey.replaceAll("\"", "");
+        }else {
+            return preSharedKey;
+        }
+
     }
 
     public void setPreSharedKey(String preSharedKey) {
@@ -177,5 +186,10 @@ public class WifiConfiguration {
                 ", securityType=" + securityType +
                 ", authType=" + getAuthType() +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return ((WifiConfiguration) o).getSSID().equals(getSSID());
     }
 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.github.frunoyman.adapters.BaseAdapter;
 import com.github.frunoyman.shell.Shell;
 import org.apache.log4j.Logger;
@@ -28,7 +29,6 @@ public class Wifi extends BaseAdapter {
             + "disable";
     private final String GET_STATE = AM_COMMAND
             + "getState";
-
     private final String IS_ENABLED = AM_COMMAND
             + "isEnabled";
     private final String ADD_NETWORK = AM_COMMAND
@@ -41,13 +41,26 @@ public class Wifi extends BaseAdapter {
             + "removeNetwork,";
     private final String GET_CONFIGURE_NETWORKS = AM_COMMAND
             + "getConfiguredNetworks";
+    private final String DISCONNECT = AM_COMMAND
+            + "disconnect";
+    private final String GET_WIFI_AP_CONFIGURATION = AM_COMMAND
+            + "getWifiApConfiguration";
+    private final String GET_WIFI_AP_STATE = AM_COMMAND
+            + "getWifiApState";
+    private final String IS_WIFI_AP_ENABLED = AM_COMMAND
+            + "isWifiApEnabled";
+    private final String START_TETHERING = AM_COMMAND
+            + "startTethering";
+    private final String STOP_TETHERING = AM_COMMAND
+            + "stopTethering";
+    private final String SET_WIFI_AP_CONFIGURATION = AM_COMMAND
+            +"setWifiApConfiguration,";
 
 
     public Wifi(Shell shell) {
         super(shell);
         logger = Logger.getLogger(Wifi.class.getName() + "] [" + shell.getSerial());
     }
-
 
 
     public enum State {
@@ -107,14 +120,18 @@ public class Wifi extends BaseAdapter {
         return result;
     }
 
-    public int addNetwork(String ssid, String pass, WifiConfiguration.SecurityType securityType) throws Exception {
-        int result = Integer.parseInt(shell.executeBroadcast(ADD_NETWORK + ssid + "," + pass + "," + securityType.getConfig()));
+    public boolean setWifiApConfiguration(String ssid, String pass, WifiConfiguration.SecurityType securityType) throws Exception {
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(SET_WIFI_AP_CONFIGURATION + ssid + "," + pass + "," + securityType.getConfig()));
         logger.debug("add network ssid [" + ssid + "] pass [" + pass + "] config [" + securityType + "] [" + result + "]");
         return result;
     }
 
+    public boolean setWifiApConfiguration(WifiConfiguration wifiConfiguration) throws Exception {
+        return setWifiApConfiguration(wifiConfiguration.getSSID(), wifiConfiguration.getPreSharedKey(),wifiConfiguration.getSecurityType());
+    }
+
     public int addNetwork(WifiConfiguration wifiConfiguration) throws Exception {
-        return addNetwork(wifiConfiguration.getSSID(),wifiConfiguration.getPreSharedKey(),wifiConfiguration.getSecurityType());
+        return addNetwork(wifiConfiguration.getSSID(), wifiConfiguration.getPreSharedKey(), wifiConfiguration.getSecurityType());
     }
 
     public boolean enableNetwork(int netId) throws Exception {
@@ -129,6 +146,12 @@ public class Wifi extends BaseAdapter {
         return result;
     }
 
+    public boolean disconnect() throws Exception {
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(DISCONNECT));
+        logger.debug("disconnect");
+        return result;
+    }
+
     public boolean removeNetwork(int netId) throws Exception {
         boolean result = Boolean.parseBoolean(shell.executeBroadcast(REMOVE_NETWORK + netId));
         logger.debug("remove network id [" + netId + "] [" + result + "]");
@@ -136,9 +159,9 @@ public class Wifi extends BaseAdapter {
     }
 
     public void removeAllNetworks() throws Exception {
-       for (WifiConfiguration configuration:getConfiguredNetworks()){
-           removeNetwork(configuration.getNetworkId());
-       }
+        for (WifiConfiguration configuration : getConfiguredNetworks()) {
+            removeNetwork(configuration.getNetworkId());
+        }
     }
 
     public List<WifiConfiguration> getConfiguredNetworks() throws Exception {
@@ -148,8 +171,48 @@ public class Wifi extends BaseAdapter {
         mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
         mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
         mapper.disable(MapperFeature.AUTO_DETECT_GETTERS);
-        List<WifiConfiguration> wifiConfigurations =  Arrays.asList(mapper.readValue(result, WifiConfiguration[].class));
+        List<WifiConfiguration> wifiConfigurations = Arrays.asList(mapper.readValue(result, WifiConfiguration[].class));
         logger.debug("get configured networks");
         return wifiConfigurations;
+    }
+
+    public WifiConfiguration getWifiHotspotConfiguration() throws Exception {
+        String result = shell.executeBroadcast(GET_WIFI_AP_CONFIGURATION);
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
+        mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+        WifiConfiguration wifiConfiguration = mapper.readValue(result, WifiConfiguration.class);
+        logger.debug("get hotspot configured network");
+        return wifiConfiguration;
+    }
+
+    public State getWifiHotspotState() throws Exception {
+        State state = State.getState(Integer.parseInt(shell.executeBroadcast(GET_WIFI_AP_STATE)));
+        logger.debug("get hotspot state [" + state + "]");
+        return state;
+    }
+
+    public boolean isWifiHotspotEnabled() throws Exception {
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(IS_WIFI_AP_ENABLED));
+        logger.debug("is hotspot enabled [" + result + "]");
+        return result;
+    }
+
+    public boolean startHotspotTethering() throws Exception {
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(START_TETHERING));
+        logger.debug("start hotspot [" + result + "]");
+        return result;
+    }
+
+    public void stopHotspotTethering() throws Exception {
+        shell.executeBroadcast(STOP_TETHERING);
+        logger.debug("stop hotspot");
+    }
+
+    public int addNetwork(String ssid, String pass, WifiConfiguration.SecurityType securityType) throws Exception {
+        int result = Integer.parseInt(shell.executeBroadcast(ADD_NETWORK + ssid + "," + pass + "," + securityType.getConfig()));
+        logger.debug("add network ssid [" + ssid + "] pass [" + pass + "] config [" + securityType + "] [" + result + "]");
+        return result;
     }
 }
