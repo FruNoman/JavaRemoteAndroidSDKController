@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.github.frunoyman.adapters.BaseAdapter;
 import com.github.frunoyman.shell.Shell;
 import org.apache.log4j.Logger;
@@ -120,20 +119,6 @@ public class Wifi extends BaseAdapter {
         return result;
     }
 
-    public boolean setWifiApConfiguration(String ssid, String pass, WifiConfiguration.SecurityType securityType) throws Exception {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(SET_WIFI_AP_CONFIGURATION + ssid + "," + pass + "," + securityType.getConfig()));
-        logger.debug("add network ssid [" + ssid + "] pass [" + pass + "] config [" + securityType + "] [" + result + "]");
-        return result;
-    }
-
-    public boolean setWifiApConfiguration(WifiConfiguration wifiConfiguration) throws Exception {
-        return setWifiApConfiguration(wifiConfiguration.getSSID(), wifiConfiguration.getPreSharedKey(),wifiConfiguration.getSecurityType());
-    }
-
-    public int addNetwork(WifiConfiguration wifiConfiguration) throws Exception {
-        return addNetwork(wifiConfiguration.getSSID(), wifiConfiguration.getPreSharedKey(), wifiConfiguration.getSecurityType());
-    }
-
     public boolean enableNetwork(int netId) throws Exception {
         boolean result = Boolean.parseBoolean(shell.executeBroadcast(ENABLE_NETWORK + netId));
         logger.debug("enable network id [" + netId + "] [" + result + "]");
@@ -185,6 +170,19 @@ public class Wifi extends BaseAdapter {
         WifiConfiguration wifiConfiguration = mapper.readValue(result, WifiConfiguration.class);
         logger.debug("get hotspot configured network");
         return wifiConfiguration;
+    }
+    public boolean setWifiHotspotConfiguration(String ssid, String pass, WifiConfiguration.SecurityType securityType) throws Exception {
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(SET_WIFI_AP_CONFIGURATION + ssid + "," + pass + "," + securityType.getConfig()));
+        logger.debug("add network ssid [" + ssid + "] pass [" + pass + "] config [" + securityType + "] [" + result + "]");
+        return result;
+    }
+
+    public boolean setWifiHotspotConfiguration(WifiConfiguration wifiConfiguration) throws Exception {
+        return setWifiHotspotConfiguration(wifiConfiguration.getSSID(), wifiConfiguration.getPreSharedKey(),wifiConfiguration.getSecurityType());
+    }
+
+    public int addNetwork(WifiConfiguration wifiConfiguration) throws Exception {
+        return addNetwork(wifiConfiguration.getSSID(), wifiConfiguration.getPreSharedKey(), wifiConfiguration.getSecurityType());
     }
 
     public State getWifiHotspotState() throws Exception {

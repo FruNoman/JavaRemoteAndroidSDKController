@@ -147,23 +147,42 @@ public class WifiDDMLibTests {
     public void setHotSpotConfig() throws Exception {
         WifiConfiguration pass = new WifiConfiguration("Mama", "sukaSomeBliat", WifiConfiguration.SecurityType.PASS);
 
-        wifi.setWifiApConfiguration(pass);
+        wifi.setWifiHotspotConfiguration(pass);
 
         Thread.sleep(4000);
 
         Assert.assertEquals(pass, wifi.getWifiHotspotConfiguration());
 
+        wifi.startHotspotTethering();
+
+        waiter.until(WifiExpectedConditions.hotspotEnabled());
+
+        waiter.until(WifiExpectedConditions.hotspotState(Wifi.State.WIFI_AP_STATE_ENABLED));
+
         System.out.println(wifi.getWifiHotspotConfiguration());
+
+        Thread.sleep(4000);
+
+        wifi.stopHotspotTethering();
+
+        waiter.until(WifiExpectedConditions.hotspotDisabled());
+
+        waiter.until(WifiExpectedConditions.hotspotState(Wifi.State.WIFI_AP_STATE_DISABLED));
+
+        System.out.println(wifi.getWifiHotspotConfiguration());
+
 
         WifiConfiguration open = new WifiConfiguration("KAKA", "", WifiConfiguration.SecurityType.OPEN);
 
-        wifi.setWifiApConfiguration(open);
+        wifi.setWifiHotspotConfiguration(open);
 
         Thread.sleep(4000);
 
         Assert.assertEquals(open, wifi.getWifiHotspotConfiguration());
 
         System.out.println(wifi.getWifiHotspotConfiguration());
+
+
 
     }
 }
