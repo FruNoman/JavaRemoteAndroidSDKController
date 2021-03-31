@@ -56,6 +56,24 @@ public class Wifi extends BaseAdapter {
             +"setWifiApConfiguration,";
 
 
+    private final String RECONNECT = AM_COMMAND
+            +"reconnect";
+    private final String REASSOCIATE = AM_COMMAND
+            +"reassociate";
+    private final String START_SCAN = AM_COMMAND
+            +"startScan";
+    private final String GET_SCAN_RESULT = AM_COMMAND
+            +"getScanResults";
+    private final String IS_CONNECTED = AM_COMMAND
+            +"isConnected";
+    private final String IS_SCAN_ALWAYS_AVAILABLE = AM_COMMAND
+            +"isScanAlwaysAvailable";
+    private final String SET_SCAN_ALWAYS_AVAILABLE = AM_COMMAND
+            +"setScanAlwaysAvailable,";
+    private final String GET_SCAN_ALWAYS_AVAILABLE = AM_COMMAND
+            +"getScanAlwaysAvailable";
+
+
     public Wifi(Shell shell) {
         super(shell);
         logger = Logger.getLogger(Wifi.class.getName() + "] [" + shell.getSerial());
@@ -173,7 +191,7 @@ public class Wifi extends BaseAdapter {
     }
     public boolean setWifiHotspotConfiguration(String ssid, String pass, WifiConfiguration.SecurityType securityType) throws Exception {
         boolean result = Boolean.parseBoolean(shell.executeBroadcast(SET_WIFI_AP_CONFIGURATION + ssid + "," + pass + "," + securityType.getConfig()));
-        logger.debug("add network ssid [" + ssid + "] pass [" + pass + "] config [" + securityType + "] [" + result + "]");
+        logger.debug("set hotspot configuration [" + ssid + "] pass [" + pass + "] config [" + securityType + "] [" + result + "]");
         return result;
     }
 
@@ -211,6 +229,51 @@ public class Wifi extends BaseAdapter {
     public int addNetwork(String ssid, String pass, WifiConfiguration.SecurityType securityType) throws Exception {
         int result = Integer.parseInt(shell.executeBroadcast(ADD_NETWORK + ssid + "," + pass + "," + securityType.getConfig()));
         logger.debug("add network ssid [" + ssid + "] pass [" + pass + "] config [" + securityType + "] [" + result + "]");
+        return result;
+    }
+
+    public boolean reconnect() throws Exception {
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(RECONNECT));
+        logger.debug("reconnect ["+result+"]");
+        return result;
+    }
+
+    public boolean reassociate() throws Exception {
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(REASSOCIATE));
+        logger.debug("reassociate ["+result+"]");
+        return result;
+    }
+
+    public boolean startScan() throws Exception {
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(START_SCAN));
+        logger.debug("start scan ["+result+"]");
+        return result;
+    }
+
+    public List<ScanResult> getScanResults() throws Exception {
+        String result = shell.executeBroadcast(GET_SCAN_RESULT);
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        List<ScanResult> scanResults =  Arrays.asList(mapper.readValue(result, ScanResult[].class));
+        logger.debug("get scan results");
+        return scanResults;
+    }
+
+    public boolean isNetworkConnected() throws Exception {
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(IS_CONNECTED));
+        logger.debug("is network connected ["+result+"]");
+        return result;
+    }
+
+    public boolean isScanAlwaysAvailable() throws Exception {
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(IS_SCAN_ALWAYS_AVAILABLE));
+        logger.debug("is scan always available ["+result+"]");
+        return result;
+    }
+
+    public boolean sesScanAlwaysAvailable(boolean state) throws Exception {
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(SET_SCAN_ALWAYS_AVAILABLE+state));
+        logger.debug("set scan always available ["+state+"] ["+result+"]");
         return result;
     }
 }

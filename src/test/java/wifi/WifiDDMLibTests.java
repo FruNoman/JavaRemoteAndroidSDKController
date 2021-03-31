@@ -66,11 +66,6 @@ public class WifiDDMLibTests {
                 )
         );
 
-        Assert.assertEquals(
-                wifi.getState(),
-                Wifi.State.WIFI_STATE_ENABLED
-        );
-
         wifi.disable();
 
         waiter.until(WifiExpectedConditions.disabled());
@@ -79,11 +74,6 @@ public class WifiDDMLibTests {
                 WifiExpectedConditions.state(
                         Wifi.State.WIFI_STATE_DISABLED
                 )
-        );
-
-        Assert.assertEquals(
-                wifi.getState(),
-                Wifi.State.WIFI_STATE_DISABLED
         );
     }
 
