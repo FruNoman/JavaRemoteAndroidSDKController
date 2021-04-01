@@ -98,6 +98,7 @@ public class WifiDDMLibTests {
             System.out.println(configuration);
         }
 
+
         wifi.disableNetwork(netId);
 
         waiter.until(WifiExpectedConditions.networkStatus("RNS_AES", WifiConfiguration.Status.DISABLED));
@@ -172,7 +173,16 @@ public class WifiDDMLibTests {
 
         System.out.println(wifi.getWifiHotspotConfiguration());
 
+    }
 
+    @Test
+    public void scanResult() throws Exception {
+        wifi.enable();
 
+        waiter.until(WifiExpectedConditions.enabled());
+
+//        wifi.startScan();
+
+        wifi.getScanResults();
     }
 }

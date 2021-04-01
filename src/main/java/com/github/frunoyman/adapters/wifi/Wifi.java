@@ -65,7 +65,7 @@ public class Wifi extends BaseAdapter {
     private final String GET_SCAN_RESULT = AM_COMMAND
             +"getScanResults";
     private final String IS_CONNECTED = AM_COMMAND
-            +"isConnected";
+            +"isWifiNetworkConnected";
     private final String IS_SCAN_ALWAYS_AVAILABLE = AM_COMMAND
             +"isScanAlwaysAvailable";
     private final String SET_SCAN_ALWAYS_AVAILABLE = AM_COMMAND
@@ -189,6 +189,7 @@ public class Wifi extends BaseAdapter {
         logger.debug("get hotspot configured network");
         return wifiConfiguration;
     }
+
     public boolean setWifiHotspotConfiguration(String ssid, String pass, WifiConfiguration.SecurityType securityType) throws Exception {
         boolean result = Boolean.parseBoolean(shell.executeBroadcast(SET_WIFI_AP_CONFIGURATION + ssid + "," + pass + "," + securityType.getConfig()));
         logger.debug("set hotspot configuration [" + ssid + "] pass [" + pass + "] config [" + securityType + "] [" + result + "]");
@@ -196,7 +197,7 @@ public class Wifi extends BaseAdapter {
     }
 
     public boolean setWifiHotspotConfiguration(WifiConfiguration wifiConfiguration) throws Exception {
-        return setWifiHotspotConfiguration(wifiConfiguration.getSSID(), wifiConfiguration.getPreSharedKey(),wifiConfiguration.getSecurityType());
+        return setWifiHotspotConfiguration(wifiConfiguration.getSSID(), wifiConfiguration.getPreSharedKey(), wifiConfiguration.getSecurityType());
     }
 
     public int addNetwork(WifiConfiguration wifiConfiguration) throws Exception {
@@ -234,19 +235,19 @@ public class Wifi extends BaseAdapter {
 
     public boolean reconnect() throws Exception {
         boolean result = Boolean.parseBoolean(shell.executeBroadcast(RECONNECT));
-        logger.debug("reconnect ["+result+"]");
+        logger.debug("reconnect [" + result + "]");
         return result;
     }
 
     public boolean reassociate() throws Exception {
         boolean result = Boolean.parseBoolean(shell.executeBroadcast(REASSOCIATE));
-        logger.debug("reassociate ["+result+"]");
+        logger.debug("reassociate [" + result + "]");
         return result;
     }
 
     public boolean startScan() throws Exception {
         boolean result = Boolean.parseBoolean(shell.executeBroadcast(START_SCAN));
-        logger.debug("start scan ["+result+"]");
+        logger.debug("start scan [" + result + "]");
         return result;
     }
 
@@ -254,26 +255,32 @@ public class Wifi extends BaseAdapter {
         String result = shell.executeBroadcast(GET_SCAN_RESULT);
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        List<ScanResult> scanResults =  Arrays.asList(mapper.readValue(result, ScanResult[].class));
+        List<ScanResult> scanResults = Arrays.asList(mapper.readValue(result, ScanResult[].class));
         logger.debug("get scan results");
         return scanResults;
     }
 
     public boolean isNetworkConnected() throws Exception {
         boolean result = Boolean.parseBoolean(shell.executeBroadcast(IS_CONNECTED));
-        logger.debug("is network connected ["+result+"]");
+        logger.debug("is network connected [" + result + "]");
         return result;
     }
 
     public boolean isScanAlwaysAvailable() throws Exception {
         boolean result = Boolean.parseBoolean(shell.executeBroadcast(IS_SCAN_ALWAYS_AVAILABLE));
-        logger.debug("is scan always available ["+result+"]");
+        logger.debug("is scan always available [" + result + "]");
         return result;
     }
 
-    public boolean sesScanAlwaysAvailable(boolean state) throws Exception {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(SET_SCAN_ALWAYS_AVAILABLE+state));
-        logger.debug("set scan always available ["+state+"] ["+result+"]");
+    public boolean setScanAlwaysAvailable(boolean state) throws Exception {
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(SET_SCAN_ALWAYS_AVAILABLE + state));
+        logger.debug("set scan always available [" + state + "] [" + result + "]");
+        return result;
+    }
+
+    public boolean getScanAlwaysAvailable() throws Exception {
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(GET_SCAN_ALWAYS_AVAILABLE));
+        logger.debug("get scan always available  [" + result + "]");
         return result;
     }
 }
