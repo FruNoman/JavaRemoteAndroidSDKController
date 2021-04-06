@@ -181,7 +181,9 @@ public class WifiDDMLibTests {
 
         waiter.until(WifiExpectedConditions.enabled());
 
-//        wifi.startScan();
+        wifi.isScanAlwaysAvailable();
+
+        wifi.startScan();
 
         wifi.getScanResults();
     }

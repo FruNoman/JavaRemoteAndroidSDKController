@@ -2,6 +2,7 @@ package com.github.frunoyman.controllers;
 
 import com.android.ddmlib.IDevice;
 import com.github.frunoyman.adapters.bluetooth.Bluetooth;
+import com.github.frunoyman.adapters.telephony.Telecom;
 import com.github.frunoyman.adapters.wifi.Wifi;
 import com.github.frunoyman.shell.DDMLibShell;
 import com.github.frunoyman.shell.Shell;
@@ -22,5 +23,10 @@ public class DDMLibRemoteSdk extends BaseSdk{
     @Override
     public Wifi getWifi() {
         return new Wifi(shell);
+    }
+
+    @Override
+    public Telecom getTelecom() {
+        return new Telecom(shell);
     }
 }

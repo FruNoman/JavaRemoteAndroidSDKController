@@ -1,6 +1,7 @@
 package com.github.frunoyman.controllers;
 
 import com.github.frunoyman.adapters.bluetooth.Bluetooth;
+import com.github.frunoyman.adapters.telephony.Telecom;
 import com.github.frunoyman.adapters.wifi.Wifi;
 import com.github.frunoyman.shell.AppiumShell;
 import com.github.frunoyman.shell.Shell;
@@ -22,5 +23,10 @@ public class AppiumRemoteSdk extends BaseSdk{
     @Override
     public Wifi getWifi() {
         return new Wifi(shell);
+    }
+
+    @Override
+    public Telecom getTelecom() {
+        return new Telecom(shell);
     }
 }
