@@ -68,4 +68,10 @@ public class TelephonyDDMLIBTests {
             System.out.println(contact);
         }
     }
+
+    @Test
+    public void sendUssdTest() throws Exception {
+        String result = telecom.sendUssdRequest("*161#");
+        System.out.println(result);
+    }
 }

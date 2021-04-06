@@ -27,6 +27,35 @@ public class Telecom extends BaseAdapter {
     private final String GET_CONTACTS = AM_COMMAND
             + "getContacts";
 
+    private final String CALL = AM_COMMAND
+            + "callNumber";
+    private final String END_CALL = AM_COMMAND
+            + "endCallProgrammatically";
+    private final String ANSWER_RINGING_CALL = AM_COMMAND
+            + "answerRingingCall";
+    private final String GET_INCOMING_CALL_NUMBER = AM_COMMAND
+            + "getIncomingCallNumber";
+    private final String SET_DATA_ENABLED = AM_COMMAND
+            + "setDataEnabled";
+    private final String IS_NETWORK_ROAMING = AM_COMMAND
+            + "isNetworkRoaming";
+    private final String IS_DATA_ENABLED = AM_COMMAND
+            + "isDataEnabled";
+    private final String GET_DATA_STATE = AM_COMMAND
+            + "getDataState";
+    private final String GET_DATA_NETWORK_TYPE = AM_COMMAND
+            + "getDataNetworkType";
+    private final String GET_PHONE_TYPE = AM_COMMAND
+            + "getPhoneType";
+    private final String GET_SIM_STATE = AM_COMMAND
+            + "getSimState";
+    private final String GET_NETWORK_OPERATOR_NAME = AM_COMMAND
+            + "getNetworkOperatorName";
+    private final String SEND_USSD_REQUEST = AM_COMMAND
+            + "sendUssdRequest,";
+    private final String GET_USSD_RESPONSE = "getUssdResponse";
+
+
 
     public Telecom(Shell shell) {
         super(shell);
@@ -34,19 +63,9 @@ public class Telecom extends BaseAdapter {
     }
 
     public enum CallState {
-        CALL_STATE_IDLE(0),
-        /**
-         * Device call state: Ringing. A new call arrived and is
-         * ringing or waiting. In the latter case, another call is
-         * already active.
-         */
-        CALL_STATE_RINGING(1),
-        /**
-         * Device call state: Off-hook. At least one call exists
-         * that is dialing, active, or on hold, and no calls are ringing
-         * or waiting.
-         */
-        CALL_STATE_OFFHOOK(2);
+        NONE(0),
+        INCOMING_CALL(1),
+        IN_CALL(2);
 
         private int callState;
 
@@ -64,7 +83,7 @@ public class Telecom extends BaseAdapter {
                     return states;
                 }
             }
-            return CallState.CALL_STATE_IDLE;
+            return CallState.NONE;
         }
     }
 
@@ -77,6 +96,7 @@ public class Telecom extends BaseAdapter {
         } catch (Exception e) {
             return new ArrayList<>();
         }
+        logger.debug("get call history");
         return callHistories;
     }
 
@@ -89,7 +109,21 @@ public class Telecom extends BaseAdapter {
         } catch (Exception e) {
             return new ArrayList<>();
         }
+        logger.debug("get contacts");
         return contacts;
+    }
+
+    public String sendUssdRequest(String ussd) throws Exception {
+        shell.executeBroadcast(SEND_USSD_REQUEST+ussd);
+        Thread.sleep(4000);
+        String result = getUssdResponce();
+        logger.debug("send USSD request ["+ussd+"] ["+result+"]");
+        return result;
+    }
+
+    private String getUssdResponce() throws Exception {
+        String result = shell.executeBroadcast(GET_USSD_RESPONSE);
+        return result;
     }
 
 
