@@ -2,6 +2,7 @@ package wifi;
 
 import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.IDevice;
+import com.github.frunoyman.adapters.wifi.ScanResult;
 import com.github.frunoyman.adapters.wifi.Wifi;
 import com.github.frunoyman.adapters.wifi.WifiConfiguration;
 import com.github.frunoyman.controllers.DDMLibRemoteSdk;
@@ -101,7 +102,7 @@ public class WifiDDMLibTests {
 
         wifi.disableNetwork(netId);
 
-        waiter.until(WifiExpectedConditions.networkStatus("RNS_AES", WifiConfiguration.Status.DISABLED));
+//        waiter.until(WifiExpectedConditions.networkStatus("RNS_AES", WifiConfiguration.Status.DISABLED));
 
 
         for (WifiConfiguration configuration : wifi.getConfiguredNetworks()) {
@@ -185,6 +186,8 @@ public class WifiDDMLibTests {
 
         wifi.startScan();
 
-        wifi.getScanResults();
+        for(ScanResult scanResult:wifi.getScanResults()){
+            System.out.println(scanResult);
+        }
     }
 }

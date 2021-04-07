@@ -28,7 +28,7 @@ public class Telecom extends BaseAdapter {
             + "getContacts";
 
     private final String CALL = AM_COMMAND
-            + "callNumber";
+            + "callNumber,";
     private final String END_CALL = AM_COMMAND
             + "endCallProgrammatically";
     private final String ANSWER_RINGING_CALL = AM_COMMAND
@@ -53,8 +53,7 @@ public class Telecom extends BaseAdapter {
             + "getNetworkOperatorName";
     private final String SEND_USSD_REQUEST = AM_COMMAND
             + "sendUssdRequest,";
-    private final String GET_USSD_RESPONSE = "getUssdResponse";
-
+    private final String GET_USSD_RESPONSE = AM_COMMAND + "getUssdResponse";
 
 
     public Telecom(Shell shell) {
@@ -114,15 +113,36 @@ public class Telecom extends BaseAdapter {
     }
 
     public String sendUssdRequest(String ussd) throws Exception {
-        shell.executeBroadcast(SEND_USSD_REQUEST+ussd);
-        Thread.sleep(4000);
+        shell.executeBroadcast(SEND_USSD_REQUEST + ussd);
+        Thread.sleep(2000);
         String result = getUssdResponce();
-        logger.debug("send USSD request ["+ussd+"] ["+result+"]");
+        logger.debug("send USSD request [" + ussd + "] [" + result + "]");
         return result;
     }
 
     private String getUssdResponce() throws Exception {
         String result = shell.executeBroadcast(GET_USSD_RESPONSE);
+        return result;
+    }
+
+    private void call(String number) throws Exception {
+        shell.executeBroadcast(CALL+number);
+        logger.debug("call number [" + number + "]");
+    }
+
+    private void endCall() throws Exception {
+        shell.executeBroadcast(END_CALL);
+        logger.debug("end call");
+    }
+
+    private void answerIncomingCall() throws Exception {
+        shell.executeBroadcast(ANSWER_RINGING_CALL);
+        logger.debug("answer incoming call");
+    }
+
+    private String getIncomingCallNumber() throws Exception {
+        String result = shell.executeBroadcast(GET_INCOMING_CALL_NUMBER);
+        logger.debug("get incoming call number ["+result+"]");
         return result;
     }
 

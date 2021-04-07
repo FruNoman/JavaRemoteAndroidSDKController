@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public abstract class Shell {
-    protected final String ADAPTER_PATTERN = "(.*\\n)?(.*data=\")(.*)(\".*)(\\n.*)?";
+    protected final String ADAPTER_PATTERN = "(.*\\n)?(.*data=\")(.*(\\n*)?)(\".*)(\\n.*)?";
     protected final String REMOTE_PACKAGE = "com.github.remotesdk";
     protected final int ERROR_CODE = 123;
     protected final int SUCCESS_CODE = 373;
