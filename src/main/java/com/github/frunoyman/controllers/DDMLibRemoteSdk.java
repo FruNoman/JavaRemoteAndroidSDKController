@@ -2,12 +2,13 @@ package com.github.frunoyman.controllers;
 
 import com.android.ddmlib.IDevice;
 import com.github.frunoyman.adapters.bluetooth.Bluetooth;
+import com.github.frunoyman.adapters.environment.RemoteFile;
 import com.github.frunoyman.adapters.telephony.Telecom;
 import com.github.frunoyman.adapters.wifi.Wifi;
 import com.github.frunoyman.shell.DDMLibShell;
 import com.github.frunoyman.shell.Shell;
 
-public class DDMLibRemoteSdk extends BaseSdk{
+public class DDMLibRemoteSdk extends BaseSdk {
     private IDevice device;
     private Shell shell;
 
@@ -16,7 +17,7 @@ public class DDMLibRemoteSdk extends BaseSdk{
         this.shell = new DDMLibShell(device);
     }
 
-    public Bluetooth getBluetooth(){
+    public Bluetooth getBluetooth() {
         return new Bluetooth(shell);
     }
 
@@ -28,5 +29,10 @@ public class DDMLibRemoteSdk extends BaseSdk{
     @Override
     public Telecom getTelecom() {
         return new Telecom(shell);
+    }
+
+    @Override
+    public RemoteFile getRemoteFile(String path) {
+        return new RemoteFile(shell, path);
     }
 }
