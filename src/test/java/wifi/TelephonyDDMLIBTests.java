@@ -73,5 +73,16 @@ public class TelephonyDDMLIBTests {
     public void sendUssdTest() throws Exception {
         String result = telecom.sendUssdRequest("*161#");
         System.out.println(result);
+        telecom.getNetworkOperatorName();
+        telecom.getDataState();
+        telecom.getDataNetworkType();
+        telecom.getPhoneType();
+        telecom.getSimState();
+        telecom.getCallState();
+        telecom.call("466");
+        Thread.sleep(2000);
+        telecom.getCallState();
+        Thread.sleep(3000);
+        telecom.endCall();
     }
 }
