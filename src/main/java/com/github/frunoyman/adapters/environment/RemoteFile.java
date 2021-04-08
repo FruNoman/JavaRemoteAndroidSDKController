@@ -36,34 +36,34 @@ public class RemoteFile {
             + "getParent,";
 
     private final String CAN_EXECUTE = AM_COMMAND
-            +"canExecute,";
+            + "canExecute,";
     private final String CAN_READ = AM_COMMAND
-            +"canRead,";
+            + "canRead,";
     private final String CAN_WRITE = AM_COMMAND
-            +"canWrite,";
+            + "canWrite,";
     private final String IS_ABSOLUTE = AM_COMMAND
-            +"isAbsolute,";
-    private final String IS_HIDDEN =AM_COMMAND
+            + "isAbsolute,";
+    private final String IS_HIDDEN = AM_COMMAND
             + "isHidden,";
     private final String DELETE = AM_COMMAND
-            +"deleteFile,";
+            + "deleteFile,";
     private final String CREATE_NEW_FILE = AM_COMMAND
-            +"createNewFile,";
+            + "createNewFile,";
     private final String MAKE_DIR = AM_COMMAND
-            +"makeDir,";
+            + "makeDir,";
     private final String MAKE_DIRS = AM_COMMAND
-            +"createDirs,";
+            + "createDirs,";
     private final String RENAME_TO = AM_COMMAND
-            +"renameTo,";
-    private final String SET_READABLE =AM_COMMAND
+            + "renameTo,";
+    private final String SET_READABLE = AM_COMMAND
             + "setReadable,";
     private final String SET_WRITABLE = AM_COMMAND
-            +"setWritable,";
+            + "setWritable,";
     private final String SET_EXECUTABLE = AM_COMMAND
-            +"setExecutable,";
+            + "setExecutable,";
     private final String GET_TOTAL_SPACE = AM_COMMAND
-            +"getTotalSpace,";
-    private final String LAST_MODIFIED =AM_COMMAND
+            + "getTotalSpace,";
+    private final String LAST_MODIFIED = AM_COMMAND
             + "lastModified,";
 
 
@@ -108,7 +108,7 @@ public class RemoteFile {
     public RemoteFile getParent() throws Exception {
         String result = shell.executeBroadcast(GET_PARENT + absolutePath);
         logger.debug("get parent [" + result + "]");
-        return new RemoteFile(shell,result);
+        return new RemoteFile(shell, result);
     }
 
     public List<RemoteFile> listFiles() throws Exception {
@@ -116,9 +116,9 @@ public class RemoteFile {
         String result = shell.executeBroadcast(LIST_FILES + absolutePath);
         try {
             for (String path : result.replaceAll("\\[", "").replaceAll("\\]", "").split(",")) {
-                remoteFiles.add(new RemoteFile(shell,path.trim()));
+                remoteFiles.add(new RemoteFile(shell, path.trim()));
             }
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
         logger.debug("list files");
@@ -163,62 +163,64 @@ public class RemoteFile {
 
     public boolean createNewFile() throws Exception {
         boolean result = Boolean.parseBoolean(shell.executeBroadcast(CREATE_NEW_FILE + absolutePath));
-        logger.debug("create new file [" + absolutePath + "] ["+result+"]");
+        logger.debug("create new file [" + absolutePath + "] [" + result + "]");
         return result;
     }
 
     public boolean makeDir() throws Exception {
         boolean result = Boolean.parseBoolean(shell.executeBroadcast(MAKE_DIR + absolutePath));
-        logger.debug("make dir [" + absolutePath + "] ["+result+"]");
+        logger.debug("make dir [" + absolutePath + "] [" + result + "]");
         return result;
     }
 
     public boolean makeDirs() throws Exception {
         boolean result = Boolean.parseBoolean(shell.executeBroadcast(MAKE_DIRS + absolutePath));
-        logger.debug("make dirs [" + absolutePath + "] ["+result+"]");
+        logger.debug("make dirs [" + absolutePath + "] [" + result + "]");
         return result;
     }
 
     public boolean renameTo(String name) throws Exception {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(RENAME_TO + absolutePath+","+name));
-        logger.debug("rename [" + absolutePath + "] to ["+name+"] ["+result+"]");
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(RENAME_TO + absolutePath + "," + name));
+        logger.debug("rename [" + absolutePath + "] to [" + name + "] [" + result + "]");
+        if (result) {
+            absolutePath = name;
+        }
         return result;
     }
 
-    public boolean setReadable() throws Exception {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(SET_READABLE + absolutePath));
-        logger.debug("set readable [" + absolutePath + "] ["+result+"]");
-        return result;
-    }
+//    public boolean setReadable(boolean state) throws Exception {
+//        boolean result = Boolean.parseBoolean(shell.executeBroadcast(SET_READABLE + absolutePath + "," + state));
+//        logger.debug("set readable [" + absolutePath + "] [" + result + "]");
+//        return result;
+//    }
 
-    public boolean setWritable() throws Exception {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(SET_WRITABLE + absolutePath));
-        logger.debug("set writable [" + absolutePath + "] ["+result+"]");
-        return result;
-    }
+//    public boolean setWritable(boolean state) throws Exception {
+//        boolean result = Boolean.parseBoolean(shell.executeBroadcast(SET_WRITABLE + absolutePath + "," + state));
+//        logger.debug("set writable [" + absolutePath + "] [" + result + "]");
+//        return result;
+//    }
 
-    public boolean setExecutable() throws Exception {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(SET_EXECUTABLE + absolutePath));
-        logger.debug("set executable [" + absolutePath + "] ["+result+"]");
-        return result;
-    }
+//    public boolean setExecutable(boolean state) throws Exception {
+//        boolean result = Boolean.parseBoolean(shell.executeBroadcast(SET_EXECUTABLE + absolutePath + "," + state));
+//        logger.debug("set executable [" + absolutePath + "] [" + result + "]");
+//        return result;
+//    }
 
     public long getTotalSpace() throws Exception {
         long result = Long.parseLong(shell.executeBroadcast(GET_TOTAL_SPACE + absolutePath));
-        logger.debug("get total space [" + absolutePath + "] ["+result+"]");
+        logger.debug("get total space [" + absolutePath + "] [" + result + "]");
         return result;
     }
 
     public long lastModified() throws Exception {
         long result = Long.parseLong(shell.executeBroadcast(LAST_MODIFIED + absolutePath));
-        logger.debug("last modified [" + absolutePath + "] ["+result+"]");
+        logger.debug("last modified [" + absolutePath + "] [" + result + "]");
         return result;
     }
 
 
-
     @Override
     public String toString() {
-        return  "absolutePath='" + absolutePath + '\'';
+        return "absolutePath='" + absolutePath + '\'';
     }
 }

@@ -8,6 +8,7 @@ import com.github.frunoyman.adapters.environment.StorageVolume;
 import com.github.frunoyman.adapters.telephony.Telecom;
 import com.github.frunoyman.controllers.DDMLibRemoteSdk;
 import com.github.frunoyman.waiter.RemoteWaiter;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -65,6 +66,14 @@ public class EnvironmentDDMLibTest {
             file.getName();
             file.exist();
             file.getAbsolutePath();
+            file.getTotalSpace();
+            file.isAbsolute();
+            file.isHidden();
+            file.canExecute();
+            file.canRead();
+            file.canWrite();
+            file.lastModified();
+            System.out.println("-------------------------------------");
         }
     }
 
@@ -118,5 +127,63 @@ public class EnvironmentDDMLibTest {
         for(StorageVolume volume:environment.getStorageVolumes()){
             System.out.println(volume);
         }
+    }
+
+    @Test
+    public void createFileTest() throws Exception {
+        Environment environment = DDMLibRemoteSDK.getEnvironment();
+        RemoteFile logcat = DDMLibRemoteSDK.getRemoteFile("/storage/emulated/0/logcat.txt");
+        if (!logcat.exist()){
+            logcat.createNewFile();
+        }
+
+        Assert.assertTrue(logcat.exist());
+    }
+
+
+    @Test
+    public void createDeleteDirTest() throws Exception {
+        RemoteFile myDir = DDMLibRemoteSDK.getRemoteFile("/storage/emulated/0/myDir");
+        if (!myDir.exist()){
+            myDir.makeDir();
+        }
+
+        Assert.assertTrue(myDir.exist());
+        Assert.assertTrue(myDir.isDirectory());
+
+        myDir.delete();
+
+        Assert.assertFalse(myDir.exist());
+    }
+
+    @Test
+    public void createDeleteDirsTest() throws Exception {
+        RemoteFile myDir = DDMLibRemoteSDK.getRemoteFile("/storage/emulated/0/myDir/innerDir");
+        if (!myDir.exist()){
+            myDir.makeDirs();
+        }
+
+        Assert.assertTrue(myDir.exist());
+        Assert.assertTrue(myDir.isDirectory());
+
+        myDir.delete();
+
+        Assert.assertFalse(myDir.exist());
+    }
+
+    @Test
+    public void renameFileTest() throws Exception {
+        RemoteFile file = DDMLibRemoteSDK.getRemoteFile("/storage/emulated/0/beforeRename.txt");
+        if (!file.exist()){
+            file.createNewFile();
+        }
+
+        Assert.assertTrue(file.exist());
+
+        file.renameTo("/storage/emulated/0/afterRename.txt");
+
+        Assert.assertEquals(file.getName(),"afterRename.txt");
+
+        file.delete();
     }
 }
