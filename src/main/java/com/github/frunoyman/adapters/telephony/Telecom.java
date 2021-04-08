@@ -51,6 +51,9 @@ public class Telecom extends BaseAdapter {
             + "sendUssdRequest,";
     private final String GET_USSD_RESPONSE = AM_COMMAND
             + "getUssdResponse";
+    private final String GET_MOBILE_PHONE = AM_COMMAND
+            + "getMobilePhone";
+
 
 
     public Telecom(Shell shell) {
@@ -249,6 +252,12 @@ public class Telecom extends BaseAdapter {
         Thread.sleep(2000);
         String result = getUssdResponce();
         logger.debug("send USSD request [" + ussd + "] [" + result + "]");
+        return result;
+    }
+
+    public String getMobilePhone() throws Exception {
+        String result = shell.executeBroadcast(GET_MOBILE_PHONE);
+        logger.debug("get mobile phone [" + result + "]");
         return result;
     }
 

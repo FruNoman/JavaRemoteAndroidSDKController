@@ -4,6 +4,7 @@ import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.IDevice;
 import com.github.frunoyman.adapters.environment.Environment;
 import com.github.frunoyman.adapters.environment.RemoteFile;
+import com.github.frunoyman.adapters.environment.StorageVolume;
 import com.github.frunoyman.adapters.telephony.Telecom;
 import com.github.frunoyman.controllers.DDMLibRemoteSdk;
 import com.github.frunoyman.waiter.RemoteWaiter;
@@ -109,7 +110,13 @@ public class EnvironmentDDMLibTest {
             file.getAbsolutePath();
             System.out.println("---------------------");
         }
+    }
 
-
+    @Test
+    public void getStorageVolumesTest() throws Exception {
+        Environment environment = DDMLibRemoteSDK.getEnvironment();
+        for(StorageVolume volume:environment.getStorageVolumes()){
+            System.out.println(volume);
+        }
     }
 }

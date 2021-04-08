@@ -8,6 +8,7 @@ import com.github.frunoyman.adapters.telephony.Telecom;
 import com.github.frunoyman.adapters.wifi.Wifi;
 import com.github.frunoyman.controllers.DDMLibRemoteSdk;
 import com.github.frunoyman.waiter.RemoteWaiter;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -67,6 +68,11 @@ public class TelephonyDDMLIBTests {
         for (Contact contact :telecom.getContacts()){
             System.out.println(contact);
         }
+    }
+
+    @Test
+    public void getMobilePhone() throws Exception {
+        Assert.assertFalse(telecom.getMobilePhone().isEmpty());
     }
 
     @Test

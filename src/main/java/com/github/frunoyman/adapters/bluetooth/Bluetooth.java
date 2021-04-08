@@ -84,6 +84,9 @@ public class Bluetooth extends BaseAdapter {
             + "setDevicePin,";
     private final String DEVICE_CANCEL_PAIRING = AM_COMMAND
             + "deviceCancelPairing,";
+    private final String IS_BLUETOOTH_A2DP_ON = AM_COMMAND
+            +"isBluetoothA2dpOn";
+
 
 
     public Bluetooth(Shell shell) {
@@ -231,6 +234,12 @@ public class Bluetooth extends BaseAdapter {
     public boolean startDiscovery() throws Exception {
         boolean result = Boolean.parseBoolean(shell.executeBroadcast(START_DISCOVERY));
         logger.debug("start discovery [" + result + "]");
+        return result;
+    }
+
+    public boolean isBluetoothA2dpOn() throws Exception {
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(IS_BLUETOOTH_A2DP_ON));
+        logger.debug("is bluetooth A2DP on [" + result + "]");
         return result;
     }
 
