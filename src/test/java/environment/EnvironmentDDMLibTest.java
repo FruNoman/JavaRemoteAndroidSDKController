@@ -2,6 +2,7 @@ package environment;
 
 import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.IDevice;
+import com.github.frunoyman.adapters.environment.Environment;
 import com.github.frunoyman.adapters.environment.RemoteFile;
 import com.github.frunoyman.adapters.telephony.Telecom;
 import com.github.frunoyman.controllers.DDMLibRemoteSdk;
@@ -9,7 +10,9 @@ import com.github.frunoyman.waiter.RemoteWaiter;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class EnvironmentDDMLibTest {
@@ -54,7 +57,26 @@ public class EnvironmentDDMLibTest {
 
     @Test
     public void remoteFileExistTetst() throws Exception {
-        RemoteFile remoteFile = DDMLibRemoteSDK.getRemoteFile("/data/local/tmp");
-        remoteFile.exist();
+        RemoteFile remoteFile = DDMLibRemoteSDK.getRemoteFile("/storage/emulated/0");
+        for (RemoteFile file:remoteFile.listFiles()){
+            file.isFile();
+            file.isDirectory();
+            file.getName();
+            file.exist();
+            file.getAbsolutePath();
+        }
+    }
+
+    @Test
+    public void environmentTest() throws Exception {
+        Environment environment = DDMLibRemoteSDK.getEnvironment();
+        RemoteFile remoteFile = DDMLibRemoteSDK.getRemoteFile(environment.getExternalStorageDirectory().getAbsolutePath());
+        for (RemoteFile file:remoteFile.listFiles()){
+            file.isFile();
+            file.isDirectory();
+            file.getName();
+            file.exist();
+            file.getAbsolutePath();
+        }
     }
 }

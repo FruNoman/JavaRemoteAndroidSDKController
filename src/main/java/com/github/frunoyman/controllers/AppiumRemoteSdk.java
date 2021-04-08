@@ -1,6 +1,7 @@
 package com.github.frunoyman.controllers;
 
 import com.github.frunoyman.adapters.bluetooth.Bluetooth;
+import com.github.frunoyman.adapters.environment.Environment;
 import com.github.frunoyman.adapters.environment.RemoteFile;
 import com.github.frunoyman.adapters.telephony.Telecom;
 import com.github.frunoyman.adapters.wifi.Wifi;
@@ -34,5 +35,15 @@ public class AppiumRemoteSdk extends BaseSdk {
     @Override
     public RemoteFile getRemoteFile(String path) {
         return new RemoteFile(shell, path);
+    }
+
+    @Override
+    public Environment getEnvironment() {
+        return new Environment(shell);
+    }
+
+    @Override
+    public Shell getShell() {
+        return shell;
     }
 }

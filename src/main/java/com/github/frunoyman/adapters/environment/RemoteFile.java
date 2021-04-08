@@ -4,6 +4,9 @@ import com.github.frunoyman.adapters.bluetooth.Bluetooth;
 import com.github.frunoyman.shell.Shell;
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class RemoteFile {
     public static final String ENVIRONMENT_COMMAND = "environment_remote ";
     public static final String ENVIRONMENT_REMOTE = "com.github.remotesdk.ENVIRONMENT_REMOTE";
@@ -35,11 +38,8 @@ public class RemoteFile {
     private String absolutePath;
 
     public String getAbsolutePath() {
+        logger.debug("get absolute path [" + absolutePath + "]");
         return absolutePath;
-    }
-
-    public void setAbsolutePath(String absolutePath) {
-        this.absolutePath = absolutePath;
     }
 
     public RemoteFile(Shell shell, String absolutePath) {
@@ -48,9 +48,54 @@ public class RemoteFile {
         logger = Logger.getLogger(RemoteFile.class.getName() + "] [" + shell.getSerial());
     }
 
+
     public boolean exist() throws Exception {
         boolean result = Boolean.parseBoolean(shell.executeBroadcast(IS_FILE_EXIST + absolutePath));
         logger.debug("is exist [" + result + "]");
         return result;
+    }
+
+    public boolean isFile() throws Exception {
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(IS_FILE + absolutePath));
+        logger.debug("is file [" + result + "]");
+        return result;
+    }
+
+    public boolean isDirectory() throws Exception {
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(IS_DIRECTORY + absolutePath));
+        logger.debug("is directory [" + result + "]");
+        return result;
+    }
+
+    public String getName() throws Exception {
+        String result = shell.executeBroadcast(GET_NAME + absolutePath);
+        logger.debug("get name [" + result + "]");
+        return result;
+    }
+
+    public RemoteFile getParent() throws Exception {
+        String result = shell.executeBroadcast(GET_PARENT + absolutePath);
+        logger.debug("get parent [" + result + "]");
+        return new RemoteFile(shell,result);
+    }
+
+    public List<RemoteFile> listFiles() throws Exception {
+        List<RemoteFile> remoteFiles = new ArrayList<>();
+        String result = shell.executeBroadcast(LIST_FILES + absolutePath);
+        try {
+            for (String path : result.replaceAll("\\[", "").replaceAll("\\]", "").split(",")) {
+                remoteFiles.add(new RemoteFile(shell,path.trim()));
+            }
+        }catch (Exception e){
+
+        }
+        logger.debug("list files");
+        return remoteFiles;
+    }
+
+
+    @Override
+    public String toString() {
+        return  "absolutePath='" + absolutePath + '\'';
     }
 }
