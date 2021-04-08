@@ -34,4 +34,22 @@ public class Environment extends BaseAdapter {
         logger.debug("get external storage directory [" + result + "]");
         return new RemoteFile(shell,result);
     }
+
+    public RemoteFile getRootDirectory() throws Exception {
+        String  result = shell.executeBroadcast(GET_ROOT_DIRECTORY);
+        logger.debug("get root directory [" + result + "]");
+        return new RemoteFile(shell,result);
+    }
+
+    public RemoteFile getDataDirectory() throws Exception {
+        String  result = shell.executeBroadcast(GET_DATA_DIRECTORY);
+        logger.debug("get data directory [" + result + "]");
+        return new RemoteFile(shell,result);
+    }
+
+    public RemoteFile getDownloadCacheDirectory() throws Exception {
+        String  result = shell.executeBroadcast(GET_DOWNLOAD_CACHE_DIRECTORY);
+        logger.debug("get download cache directory [" + result + "]");
+        return new RemoteFile(shell,result);
+    }
 }

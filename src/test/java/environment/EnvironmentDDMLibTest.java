@@ -70,13 +70,46 @@ public class EnvironmentDDMLibTest {
     @Test
     public void environmentTest() throws Exception {
         Environment environment = DDMLibRemoteSDK.getEnvironment();
-        RemoteFile remoteFile = DDMLibRemoteSDK.getRemoteFile(environment.getExternalStorageDirectory().getAbsolutePath());
-        for (RemoteFile file:remoteFile.listFiles()){
+        RemoteFile externalStorage = environment.getExternalStorageDirectory();
+        for (RemoteFile file:externalStorage.listFiles()){
             file.isFile();
             file.isDirectory();
             file.getName();
             file.exist();
             file.getAbsolutePath();
+            System.out.println("---------------------");
         }
+
+        RemoteFile dataDirectory = environment.getDataDirectory();
+        for (RemoteFile file:dataDirectory.listFiles()){
+            file.isFile();
+            file.isDirectory();
+            file.getName();
+            file.exist();
+            file.getAbsolutePath();
+            System.out.println("---------------------");
+        }
+
+        RemoteFile downloadCacheDirectory = environment.getDownloadCacheDirectory();
+        for (RemoteFile file:downloadCacheDirectory.listFiles()){
+            file.isFile();
+            file.isDirectory();
+            file.getName();
+            file.exist();
+            file.getAbsolutePath();
+            System.out.println("---------------------");
+        }
+
+        RemoteFile rootDirectory = environment.getRootDirectory();
+        for (RemoteFile file:rootDirectory.listFiles()){
+            file.isFile();
+            file.isDirectory();
+            file.getName();
+            file.exist();
+            file.getAbsolutePath();
+            System.out.println("---------------------");
+        }
+
+
     }
 }
