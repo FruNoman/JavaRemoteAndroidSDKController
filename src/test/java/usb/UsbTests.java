@@ -2,6 +2,7 @@ package usb;
 
 import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.IDevice;
+import com.github.frunoyman.adapters.usb.InputDevice;
 import com.github.frunoyman.adapters.usb.Usb;
 import com.github.frunoyman.adapters.usb.UsbDevice;
 import com.github.frunoyman.controllers.DDMLibRemoteSdk;
@@ -53,9 +54,17 @@ public class UsbTests {
     }
 
     @Test
-    public void usbTest() throws Exception {
+    public void getUsbDeviceTest() throws Exception {
         Usb usb = DDMLibRemoteSDK.getUsb();
         for (UsbDevice device:usb.getDeviceList()){
+            System.out.println(device);
+        }
+    }
+
+    @Test
+    public void getInputDeviceTest() throws Exception {
+        Usb usb = DDMLibRemoteSDK.getUsb();
+        for (InputDevice device:usb.getInputDeviceList()){
             System.out.println(device);
         }
     }
