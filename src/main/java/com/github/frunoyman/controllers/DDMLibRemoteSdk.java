@@ -5,6 +5,7 @@ import com.github.frunoyman.adapters.bluetooth.Bluetooth;
 import com.github.frunoyman.adapters.environment.Environment;
 import com.github.frunoyman.adapters.environment.RemoteFile;
 import com.github.frunoyman.adapters.telephony.Telecom;
+import com.github.frunoyman.adapters.usb.Usb;
 import com.github.frunoyman.adapters.wifi.Wifi;
 import com.github.frunoyman.shell.DDMLibShell;
 import com.github.frunoyman.shell.Shell;
@@ -40,6 +41,11 @@ public class DDMLibRemoteSdk extends BaseSdk {
     @Override
     public Environment getEnvironment() {
         return new Environment(shell);
+    }
+
+    @Override
+    public Usb getUsb() {
+        return new Usb(shell);
     }
 
     @Override
