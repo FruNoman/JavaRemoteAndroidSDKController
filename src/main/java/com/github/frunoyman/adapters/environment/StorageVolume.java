@@ -77,16 +77,6 @@ public class StorageVolume {
 
     @Override
     public String toString() {
-        return
-                "fatVolumeId=" + fatVolumeId +
-                ", id='" + id + '\'' +
-                ", maxFileSize=" + maxFileSize +
-                ", path='" + path + '\'' +
-                ", pathFile='" + pathFile + '\'' +
-                ", state='" + state + '\'' +
-                ", userLabel='" + userLabel + '\'' +
-                ", emulated=" + emulated +
-                ", primary=" + primary +
-                ", removable=" + removable + '\'';
+        return path;
     }
 }
