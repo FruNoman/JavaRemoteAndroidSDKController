@@ -1,6 +1,5 @@
 package com.github.frunoyman.adapters.environment;
 
-import com.github.frunoyman.adapters.bluetooth.Bluetooth;
 import com.github.frunoyman.shell.Shell;
 import org.apache.log4j.Logger;
 
@@ -8,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RemoteFile {
-    public static final String ENVIRONMENT_COMMAND = "environment_remote ";
+    public static final String ENVIRONMENT_COMMAND = "environment_command ";
     public static final String ENVIRONMENT_REMOTE = "com.github.remotesdk.ENVIRONMENT_REMOTE";
     private Logger logger;
     private Shell shell;
@@ -81,39 +80,42 @@ public class RemoteFile {
     }
 
 
-    public boolean exist() throws Exception {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(IS_FILE_EXIST + absolutePath));
+    public boolean exist() {
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(IS_FILE_EXIST + "'" + absolutePath+ "'"));
         logger.debug("is exist [" + result + "]");
         return result;
     }
 
-    public boolean isFile() throws Exception {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(IS_FILE + absolutePath));
+    public boolean isFile() {
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(IS_FILE + "'" + absolutePath+ "'" ));
         logger.debug("is file [" + result + "]");
         return result;
     }
 
-    public boolean isDirectory() throws Exception {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(IS_DIRECTORY + absolutePath));
+    public boolean isDirectory() {
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(IS_DIRECTORY + "'" +  absolutePath+ "'"));
         logger.debug("is directory [" + result + "]");
         return result;
     }
 
-    public String getName() throws Exception {
-        String result = shell.executeBroadcast(GET_NAME + absolutePath);
+    public String getName() {
+        String result = shell.executeBroadcast(GET_NAME + "'" + absolutePath+ "'" );
         logger.debug("get name [" + result + "]");
         return result;
     }
 
-    public RemoteFile getParent() throws Exception {
-        String result = shell.executeBroadcast(GET_PARENT + absolutePath);
+    public RemoteFile getParent() {
+        String result = shell.executeBroadcast(GET_PARENT + "'" +  absolutePath+ "'");
         logger.debug("get parent [" + result + "]");
         return new RemoteFile(shell, result);
     }
 
-    public List<RemoteFile> listFiles() throws Exception {
+    public List<RemoteFile> listFiles() {
         List<RemoteFile> remoteFiles = new ArrayList<>();
-        String result = shell.executeBroadcast(LIST_FILES + absolutePath);
+        if (!this.exist()){
+            throw new RuntimeException("Remote file not exist");
+        }
+        String result = shell.executeBroadcast(LIST_FILES + "'" + absolutePath+ "'");
         try {
             for (String path : result.replaceAll("\\[", "").replaceAll("\\]", "").split(",")) {
                 remoteFiles.add(new RemoteFile(shell, path.trim()));
@@ -125,62 +127,62 @@ public class RemoteFile {
         return remoteFiles;
     }
 
-    public boolean canExecute() throws Exception {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(CAN_EXECUTE + absolutePath));
+    public boolean canExecute() {
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(CAN_EXECUTE + "'" +  absolutePath+ "'" ));
         logger.debug("can execute [" + result + "]");
         return result;
     }
 
-    public boolean canRead() throws Exception {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(CAN_READ + absolutePath));
+    public boolean canRead() {
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(CAN_READ + "'" + absolutePath+ "'"));
         logger.debug("can read [" + result + "]");
         return result;
     }
 
-    public boolean canWrite() throws Exception {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(CAN_WRITE + absolutePath));
+    public boolean canWrite() {
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(CAN_WRITE + "'" +  absolutePath+ "'"));
         logger.debug("can write [" + result + "]");
         return result;
     }
 
-    public boolean isAbsolute() throws Exception {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(IS_ABSOLUTE + absolutePath));
+    public boolean isAbsolute() {
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(IS_ABSOLUTE + "'" +absolutePath+ "'" ));
         logger.debug("is absolute [" + result + "]");
         return result;
     }
 
-    public boolean isHidden() throws Exception {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(IS_HIDDEN + absolutePath));
+    public boolean isHidden() {
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(IS_HIDDEN + "'" + absolutePath+ "'"));
         logger.debug("is hidden [" + result + "]");
         return result;
     }
 
-    public boolean delete() throws Exception {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(DELETE + absolutePath));
+    public boolean delete() {
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(DELETE + "'" +  absolutePath+ "'" ));
         logger.debug("delete [" + result + "]");
         return result;
     }
 
-    public boolean createNewFile() throws Exception {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(CREATE_NEW_FILE + absolutePath));
+    public boolean createNewFile() {
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(CREATE_NEW_FILE + "'" +  absolutePath+ "'"));
         logger.debug("create new file [" + absolutePath + "] [" + result + "]");
         return result;
     }
 
-    public boolean makeDir() throws Exception {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(MAKE_DIR + absolutePath));
+    public boolean makeDir() {
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(MAKE_DIR + "'" +  absolutePath+ "'"));
         logger.debug("make dir [" + absolutePath + "] [" + result + "]");
         return result;
     }
 
-    public boolean makeDirs() throws Exception {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(MAKE_DIRS + absolutePath));
+    public boolean makeDirs() {
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(MAKE_DIRS + "'" +  absolutePath+ "'"));
         logger.debug("make dirs [" + absolutePath + "] [" + result + "]");
         return result;
     }
 
-    public boolean renameTo(String name) throws Exception {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(RENAME_TO + absolutePath + "," + name));
+    public boolean renameTo(String name) {
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(RENAME_TO + "'" +  absolutePath + "'" +  "," + name));
         logger.debug("rename [" + absolutePath + "] to [" + name + "] [" + result + "]");
         if (result) {
             absolutePath = name;
@@ -188,32 +190,32 @@ public class RemoteFile {
         return result;
     }
 
-//    public boolean setReadable(boolean state) throws Exception {
+//    public boolean setReadable(boolean state) {
 //        boolean result = Boolean.parseBoolean(shell.executeBroadcast(SET_READABLE + absolutePath + "," + state));
 //        logger.debug("set readable [" + absolutePath + "] [" + result + "]");
 //        return result;
 //    }
 
-//    public boolean setWritable(boolean state) throws Exception {
+//    public boolean setWritable(boolean state) {
 //        boolean result = Boolean.parseBoolean(shell.executeBroadcast(SET_WRITABLE + absolutePath + "," + state));
 //        logger.debug("set writable [" + absolutePath + "] [" + result + "]");
 //        return result;
 //    }
 
-//    public boolean setExecutable(boolean state) throws Exception {
+//    public boolean setExecutable(boolean state) {
 //        boolean result = Boolean.parseBoolean(shell.executeBroadcast(SET_EXECUTABLE + absolutePath + "," + state));
 //        logger.debug("set executable [" + absolutePath + "] [" + result + "]");
 //        return result;
 //    }
 
-    public long getTotalSpace() throws Exception {
-        long result = Long.parseLong(shell.executeBroadcast(GET_TOTAL_SPACE + absolutePath));
+    public long getTotalSpace() {
+        long result = Long.parseLong(shell.executeBroadcast(GET_TOTAL_SPACE + "'" +  absolutePath+ "'" ));
         logger.debug("get total space [" + absolutePath + "] [" + result + "]");
         return result;
     }
 
-    public long lastModified() throws Exception {
-        long result = Long.parseLong(shell.executeBroadcast(LAST_MODIFIED + absolutePath));
+    public long lastModified() {
+        long result = Long.parseLong(shell.executeBroadcast(LAST_MODIFIED + "'" +  absolutePath+ "'" ));
         logger.debug("last modified [" + absolutePath + "] [" + result + "]");
         return result;
     }

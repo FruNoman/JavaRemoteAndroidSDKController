@@ -1,6 +1,5 @@
 package com.github.frunoyman.waiter;
 
-import com.github.frunoyman.adapters.bluetooth.Bluetooth;
 import com.github.frunoyman.adapters.wifi.Wifi;
 import com.github.frunoyman.adapters.wifi.WifiConfiguration;
 import com.github.frunoyman.controllers.BaseSdk;
@@ -11,7 +10,7 @@ public class WifiExpectedConditions {
         return new RemoteExpectedCondition<Boolean>() {
             public Boolean apply(BaseSdk remoteSdk) {
                 try {
-                    return remoteSdk.getWifi().isEnabled();
+                    return remoteSdk.getWifiAdapter().isEnabled();
                 } catch (Exception var3) {
                     return null;
                 }
@@ -27,7 +26,7 @@ public class WifiExpectedConditions {
         return new RemoteExpectedCondition<Boolean>() {
             public Boolean apply(BaseSdk remoteSdk) {
                 try {
-                    return !remoteSdk.getWifi().isEnabled();
+                    return !remoteSdk.getWifiAdapter().isEnabled();
                 } catch (Exception var3) {
                     return null;
                 }
@@ -43,7 +42,7 @@ public class WifiExpectedConditions {
         return new RemoteExpectedCondition<Boolean>() {
             public Boolean apply(BaseSdk remoteSdk) {
                 try {
-                    return remoteSdk.getWifi().isWifiHotspotEnabled();
+                    return remoteSdk.getWifiAdapter().isWifiHotspotEnabled();
                 } catch (Exception var3) {
                     return null;
                 }
@@ -59,7 +58,7 @@ public class WifiExpectedConditions {
         return new RemoteExpectedCondition<Boolean>() {
             public Boolean apply(BaseSdk remoteSdk) {
                 try {
-                    return !remoteSdk.getWifi().isWifiHotspotEnabled();
+                    return !remoteSdk.getWifiAdapter().isWifiHotspotEnabled();
                 } catch (Exception var3) {
                     return null;
                 }
@@ -76,7 +75,7 @@ public class WifiExpectedConditions {
             public Boolean apply(BaseSdk remoteSdk) {
                 try {
 
-                    return remoteSdk.getWifi().getState() == state;
+                    return remoteSdk.getWifiAdapter().getState() == state;
                 } catch (Exception var3) {
                     return null;
                 }
@@ -93,7 +92,7 @@ public class WifiExpectedConditions {
             public Boolean apply(BaseSdk remoteSdk) {
                 try {
 
-                    return remoteSdk.getWifi().getWifiHotspotState() == state;
+                    return remoteSdk.getWifiAdapter().getWifiHotspotState() == state;
                 } catch (Exception var3) {
                     return null;
                 }
@@ -110,7 +109,7 @@ public class WifiExpectedConditions {
             public Boolean apply(BaseSdk remoteSdk) {
                 try {
                     boolean found = false;
-                    for (WifiConfiguration configuration:remoteSdk.getWifi().getConfiguredNetworks()){
+                    for (WifiConfiguration configuration:remoteSdk.getWifiAdapter().getConfiguredNetworks()){
                         if (configuration.getSSID().equals(ssid)){
                             found =  true;
                             break;
@@ -133,7 +132,7 @@ public class WifiExpectedConditions {
             public Boolean apply(BaseSdk remoteSdk) {
                 try {
                     boolean found = false;
-                    for (WifiConfiguration configuration:remoteSdk.getWifi().getConfiguredNetworks()){
+                    for (WifiConfiguration configuration:remoteSdk.getWifiAdapter().getConfiguredNetworks()){
                         if (configuration.getSSID().equals(ssid)){
                             if (configuration.getStatus()==status){
                                 found = true;

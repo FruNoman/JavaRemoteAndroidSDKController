@@ -52,7 +52,7 @@ public class WifiDDMLibTests {
 
         device = devices.get(0);
         DDMLibRemoteSdk DDMLibRemoteSDK = new DDMLibRemoteSdk(device);
-        wifi = DDMLibRemoteSDK.getWifi();
+        wifi = DDMLibRemoteSDK.getWifiAdapter();
         waiter = new RemoteWaiter(DDMLibRemoteSDK, 15);
     }
 

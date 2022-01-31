@@ -5,7 +5,6 @@ import com.android.ddmlib.IDevice;
 import com.github.frunoyman.adapters.telephony.CallHistory;
 import com.github.frunoyman.adapters.telephony.Contact;
 import com.github.frunoyman.adapters.telephony.Telecom;
-import com.github.frunoyman.adapters.wifi.Wifi;
 import com.github.frunoyman.controllers.DDMLibRemoteSdk;
 import com.github.frunoyman.waiter.RemoteWaiter;
 import org.junit.Assert;
@@ -53,7 +52,7 @@ public class TelephonyDDMLIBTests {
         device = devices.get(0);
         DDMLibRemoteSdk DDMLibRemoteSDK = new DDMLibRemoteSdk(device);
         waiter = new RemoteWaiter(DDMLibRemoteSDK, 15);
-        telecom = DDMLibRemoteSDK.getTelecom();
+        telecom = DDMLibRemoteSDK.getTelecomAdapter();
     }
 
     @Test

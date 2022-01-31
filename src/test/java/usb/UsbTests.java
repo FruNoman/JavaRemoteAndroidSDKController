@@ -55,7 +55,7 @@ public class UsbTests {
 
     @Test
     public void getUsbDeviceTest() throws Exception {
-        Usb usb = DDMLibRemoteSDK.getUsb();
+        Usb usb = DDMLibRemoteSDK.getUsbAdapter();
         for (UsbDevice device:usb.getDeviceList()){
             System.out.println(device);
         }
@@ -63,7 +63,7 @@ public class UsbTests {
 
     @Test
     public void getInputDeviceTest() throws Exception {
-        Usb usb = DDMLibRemoteSDK.getUsb();
+        Usb usb = DDMLibRemoteSDK.getUsbAdapter();
         for (InputDevice device:usb.getInputDeviceList()){
             System.out.println(device);
         }

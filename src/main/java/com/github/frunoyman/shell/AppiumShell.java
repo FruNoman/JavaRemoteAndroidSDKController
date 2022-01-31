@@ -30,7 +30,7 @@ public class AppiumShell extends Shell {
     }
 
     @Override
-    public String execute(String... command) throws Exception {
+    public String execute(String... command) {
         StringBuilder commandBuilder = new StringBuilder();
         for (String var : command) {
             commandBuilder.append(var);
@@ -42,7 +42,7 @@ public class AppiumShell extends Shell {
     }
 
     @Override
-    public String executeBroadcast(String... command) throws Exception {
+    public String executeBroadcast(String... command){
         if (!execute("pm list packages -3").contains(REMOTE_PACKAGE)){
             logger.debug("Remote controller apk was not found, installing ...");
             File apk = getApk();
@@ -50,13 +50,17 @@ public class AppiumShell extends Shell {
             options.withGrantPermissionsEnabled();
             driver.installApp(apk.getAbsolutePath(),options);
             if (!execute("pm list packages -3").contains(REMOTE_PACKAGE)) {
-                throw new Exception("Pls install RemoteController apk manually");
+                throw new RuntimeException("Pls install RemoteController apk manually");
             }
         }
         if(!execute("ps -A").contains(REMOTE_PACKAGE)){
             logger.debug("Remote controller was not running, starting ...");
             execute("am", "start", "-n", REMOTE_PACKAGE + "/.MainActivity");
-            Thread.sleep(3000);
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             driver.pressKey(new KeyEvent(AndroidKey.HOME));
         }
         StringBuilder commandBuilder = new StringBuilder();
@@ -71,24 +75,18 @@ public class AppiumShell extends Shell {
         Matcher m = r.matcher(output);
         if (m.matches()) {
             if (output.contains("result=" + ERROR_CODE)) {
-                ObjectMapper objectMapper = new ObjectMapper();
-                objectMapper.configure(SerializationFeature.FAIL_ON_SELF_REFERENCES, false);
-                objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-                objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
-                objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
-                Exception exception = objectMapper.readValue(m.group(3), Exception.class);
-                throw exception;
+                throw new RuntimeException("Broadcast error");
             } else {
                 return m.group(3);
             }
         }else if (output.contains("result="+EMPTY_BROADCAST_CODE)){
-            throw new Exception("Empty broadcast");
+            throw new RuntimeException("Empty broadcast error");
         }
         return output;
     }
 
     @Override
     public String getSerial() {
-        return (String) driver.getCapabilities().getCapability(MobileCapabilityType.UDID);
+        return (String) execute("getprop","ro.boot.serialno").trim();
     }
 }

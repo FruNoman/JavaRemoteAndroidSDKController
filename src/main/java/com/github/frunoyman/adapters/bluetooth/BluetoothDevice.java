@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 public class BluetoothDevice extends BaseAdapter {
     private Logger logger;
 
-    private final String BLUETOOTH_COMMAND = "bluetooth_remote ";
+    private final String BLUETOOTH_COMMAND = "bluetooth_command ";
     private final String BLUETOOTH_REMOTE = "com.github.remotesdk.BLUETOOTH_REMOTE";
     private final String AM_COMMAND = BROADCAST
             + BLUETOOTH_REMOTE
@@ -126,61 +126,61 @@ public class BluetoothDevice extends BaseAdapter {
         return address;
     }
 
-    public PairState getPairState() throws Exception {
+    public PairState getPairState() {
         PairState pairState = PairState.getPairState(Integer.parseInt(shell.executeBroadcast(GET_PAIR_STATE + address)));
         logger.debug("get device [" + address + "] pair state [" + pairState + "]");
         return pairState;
     }
 
-    public String getName() throws Exception {
+    public String getName() {
         String result = shell.executeBroadcast(GET_DEVICE_NAME + address);
         logger.debug("get device [" + address + "] name [" + result + "]");
         return result;
     }
 
-    public Type getType() throws Exception {
+    public Type getType() {
         Type type = Type.getType(Integer.parseInt(shell.executeBroadcast(GET_DEVICE_TYPE + address)));
         logger.debug("get device [" + address + "] type [" + type + "]");
         return type;
     }
 
-    public BluetoothClass getBluetoothClass() throws Exception {
+    public BluetoothClass getBluetoothClass() {
         BluetoothClass bluetoothClass = new BluetoothClass(Integer.parseInt(shell.executeBroadcast(GET_DEVICE_CLASS + address)));
         logger.debug("get device [" + address + "] class [" + bluetoothClass + "]");
         return bluetoothClass;
     }
 
-    public boolean setPairingConfirmation(String address, boolean confirmation) throws Exception {
+    public boolean setPairingConfirmation(String address, boolean confirmation) {
         boolean result = Boolean.parseBoolean(shell.executeBroadcast(SET_PAIRING_CONFIRMATION + address + "," + confirmation));
         logger.debug("set pairing confirmation [" + address + "] confirmation [" + confirmation + "]");
         return result;
     }
 
-    public boolean setPin(String pin) throws Exception {
+    public boolean setPin(String pin) {
         boolean result = Boolean.parseBoolean(shell.executeBroadcast(SET_DEVICE_PIN + address + "," + pin));
         logger.debug("set device [" + address + "] pin [" + pin + "]");
         return result;
     }
 
-    public boolean cancelPairing() throws Exception {
+    public boolean cancelPairing() {
         boolean result = Boolean.parseBoolean(shell.executeBroadcast(DEVICE_CANCEL_PAIRING + address));
         logger.debug("device [" + address + "] cancel pairing ["+result+"]");
         return result;
     }
 
-    public Access getMessageAccessPermission() throws Exception {
+    public Access getMessageAccessPermission() {
         Access access =Access.getAccess(Integer.valueOf(shell.executeBroadcast(GET_MESSAGE_ACCESS_PERMISSION + address)));
         logger.debug("device [" + address + "] get message access permission ["+access+"]");
         return access;
     }
 
-    public Access getSimAccessPermission() throws Exception {
+    public Access getSimAccessPermission() {
         Access access =Access.getAccess(Integer.valueOf(shell.executeBroadcast(GET_SIM_ACCESS_PERMISSION + address)));
         logger.debug("device [" + address + "] get sim access permission ["+access+"]");
         return access;
     }
 
-    public Access getPhoneBookAccessPermission() throws Exception {
+    public Access getPhoneBookAccessPermission() {
         Access access =Access.getAccess(Integer.valueOf(shell.executeBroadcast(GET_PHONE_BOOK_ACCESS_PERMISSION + address)));
         logger.debug("device [" + address + "] get phone book access permission ["+access+"]");
         return access;

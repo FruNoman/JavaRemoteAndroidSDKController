@@ -1,9 +1,10 @@
 package com.github.frunoyman.controllers;
 
 import com.android.ddmlib.IDevice;
-import com.github.frunoyman.adapters.bluetooth.Bluetooth;
-import com.github.frunoyman.adapters.environment.Environment;
+import com.github.frunoyman.adapters.bluetooth.BluetoothAdapter;
+import com.github.frunoyman.adapters.environment.EnvironmentAdapter;
 import com.github.frunoyman.adapters.environment.RemoteFile;
+import com.github.frunoyman.adapters.location.LocationAdapter;
 import com.github.frunoyman.adapters.telephony.Telecom;
 import com.github.frunoyman.adapters.usb.Usb;
 import com.github.frunoyman.adapters.wifi.Wifi;
@@ -19,17 +20,17 @@ public class DDMLibRemoteSdk extends BaseSdk {
         this.shell = new DDMLibShell(device);
     }
 
-    public Bluetooth getBluetooth() {
-        return new Bluetooth(shell);
+    public BluetoothAdapter getBluetoothAdapter() {
+        return new BluetoothAdapter(shell);
     }
 
     @Override
-    public Wifi getWifi() {
+    public Wifi getWifiAdapter() {
         return new Wifi(shell);
     }
 
     @Override
-    public Telecom getTelecom() {
+    public Telecom getTelecomAdapter() {
         return new Telecom(shell);
     }
 
@@ -39,13 +40,18 @@ public class DDMLibRemoteSdk extends BaseSdk {
     }
 
     @Override
-    public Environment getEnvironment() {
-        return new Environment(shell);
+    public EnvironmentAdapter getEnvironmentAdapter() {
+        return new EnvironmentAdapter(shell);
     }
 
     @Override
-    public Usb getUsb() {
+    public Usb getUsbAdapter() {
         return new Usb(shell);
+    }
+
+    @Override
+    public LocationAdapter getLocationAdapter() {
+        return new LocationAdapter(shell);
     }
 
     @Override

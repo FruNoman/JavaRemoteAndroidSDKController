@@ -2,7 +2,6 @@ package com.github.frunoyman.adapters.telephony;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.frunoyman.adapters.BaseAdapter;
-import com.github.frunoyman.adapters.bluetooth.Bluetooth;
 import com.github.frunoyman.shell.Shell;
 import org.apache.log4j.Logger;
 

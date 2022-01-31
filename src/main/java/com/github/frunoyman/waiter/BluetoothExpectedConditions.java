@@ -1,19 +1,19 @@
 package com.github.frunoyman.waiter;
 
 
-import com.github.frunoyman.adapters.bluetooth.Bluetooth;
+import com.github.frunoyman.adapters.bluetooth.BluetoothAdapter;
 import com.github.frunoyman.adapters.bluetooth.BluetoothDevice;
 import com.github.frunoyman.adapters.bluetooth.BluetoothProfile;
 import com.github.frunoyman.controllers.BaseSdk;
 
 public class BluetoothExpectedConditions {
 
-    public static RemoteExpectedCondition<Boolean> enabled() {
+    public static RemoteExpectedCondition<Boolean> is_enabled() {
         return new RemoteExpectedCondition<Boolean>() {
             public Boolean apply(BaseSdk remoteSdk) {
                 try {
 
-                    return remoteSdk.getBluetooth().isEnabled();
+                    return remoteSdk.getBluetoothAdapter().isEnabled();
                 } catch (Exception var3) {
                     return null;
                 }
@@ -30,7 +30,7 @@ public class BluetoothExpectedConditions {
             public Boolean apply(BaseSdk remoteSdk) {
                 try {
 
-                    return !remoteSdk.getBluetooth().isEnabled();
+                    return !remoteSdk.getBluetoothAdapter().isEnabled();
                 } catch (Exception var3) {
                     return null;
                 }
@@ -42,12 +42,12 @@ public class BluetoothExpectedConditions {
         };
     }
 
-    public static RemoteExpectedCondition<Boolean> state(Bluetooth.State state) {
+    public static RemoteExpectedCondition<Boolean> state(BluetoothAdapter.State state) {
         return new RemoteExpectedCondition<Boolean>() {
             public Boolean apply(BaseSdk remoteSdk) {
                 try {
 
-                    return remoteSdk.getBluetooth().getState() == state;
+                    return remoteSdk.getBluetoothAdapter().getState() == state;
                 } catch (Exception var3) {
                     return null;
                 }
@@ -64,7 +64,7 @@ public class BluetoothExpectedConditions {
             public Boolean apply(BaseSdk remoteSdk) {
                 try {
 
-                    return remoteSdk.getBluetooth().isDiscoverable();
+                    return remoteSdk.getBluetoothAdapter().isDiscoverable();
                 } catch (Exception var3) {
                     return null;
                 }
@@ -81,7 +81,7 @@ public class BluetoothExpectedConditions {
             public Boolean apply(BaseSdk remoteSdk) {
                 try {
 
-                    return !remoteSdk.getBluetooth().isDiscoverable();
+                    return !remoteSdk.getBluetoothAdapter().isDiscoverable();
                 } catch (Exception var3) {
                     return null;
                 }
@@ -98,7 +98,7 @@ public class BluetoothExpectedConditions {
             public Boolean apply(BaseSdk remoteSdk) {
                 try {
 
-                    return remoteSdk.getBluetooth().isDiscovering();
+                    return remoteSdk.getBluetoothAdapter().isDiscovering();
                 } catch (Exception var3) {
                     return null;
                 }
@@ -115,7 +115,7 @@ public class BluetoothExpectedConditions {
             public Boolean apply(BaseSdk remoteSdk) {
                 try {
 
-                    return !remoteSdk.getBluetooth().isDiscovering();
+                    return !remoteSdk.getBluetoothAdapter().isDiscovering();
                 } catch (Exception var3) {
                     return null;
                 }
@@ -131,7 +131,7 @@ public class BluetoothExpectedConditions {
         return new RemoteExpectedCondition<Boolean>() {
             public Boolean apply(BaseSdk remoteSdk) {
                 try {
-                    for(BluetoothDevice device:remoteSdk.getBluetooth().getDiscoveredBluetoothDevices()){
+                    for(BluetoothDevice device:remoteSdk.getBluetoothAdapter().getDiscoveredBluetoothDevices()){
                         if (device.getAddress().equals(mac)){
                             return true;
                         }
@@ -148,12 +148,12 @@ public class BluetoothExpectedConditions {
         };
     }
 
-    public static RemoteExpectedCondition<Boolean> connectionState(Bluetooth.ConnectedState state) {
+    public static RemoteExpectedCondition<Boolean> connectionState(BluetoothAdapter.ConnectedState state) {
         return new RemoteExpectedCondition<Boolean>() {
             public Boolean apply(BaseSdk remoteSdk) {
                 try {
 
-                    return remoteSdk.getBluetooth().getConnectionState() == state;
+                    return remoteSdk.getBluetoothAdapter().getConnectionState() == state;
                 } catch (Exception var3) {
                     return null;
                 }
@@ -169,7 +169,7 @@ public class BluetoothExpectedConditions {
         return new RemoteExpectedCondition<Boolean>() {
             public Boolean apply(BaseSdk remoteSdk) {
                 try {
-                    return remoteSdk.getBluetooth().getProfileConnectionState(type) == state;
+                    return remoteSdk.getBluetoothAdapter().getProfileConnectionState(type) == state;
                 } catch (Exception var3) {
                     return null;
                 }
@@ -181,12 +181,12 @@ public class BluetoothExpectedConditions {
         };
     }
 
-    public static RemoteExpectedCondition<Boolean> scanMode(Bluetooth.ScanMode scanMode) {
+    public static RemoteExpectedCondition<Boolean> scanMode(BluetoothAdapter.ScanMode scanMode) {
         return new RemoteExpectedCondition<Boolean>() {
             public Boolean apply(BaseSdk remoteSdk) {
                 try {
 
-                    return remoteSdk.getBluetooth().getScanMode() == scanMode;
+                    return remoteSdk.getBluetoothAdapter().getScanMode() == scanMode;
                 } catch (Exception var3) {
                     return null;
                 }
@@ -203,7 +203,7 @@ public class BluetoothExpectedConditions {
             public Boolean apply(BaseSdk remoteSdk) {
                 try {
 
-                    return remoteSdk.getBluetooth().getName().equals(name);
+                    return remoteSdk.getBluetoothAdapter().getName().equals(name);
                 } catch (Exception var3) {
                     return null;
                 }

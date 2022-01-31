@@ -27,7 +27,7 @@ public class AppiumWifiTests {
         desiredCapabilities.setCapability(AndroidMobileCapabilityType.SYSTEM_PORT, 8229);
         driver = new AndroidDriver(new URL("http://0.0.0.0:4723/wd/hub"), desiredCapabilities);
         AppiumRemoteSdk remoteSdk = new AppiumRemoteSdk(driver);
-        wifi = remoteSdk.getWifi();
+        wifi = remoteSdk.getWifiAdapter();
         waiter = new RemoteWaiter(remoteSdk, 15);
     }
 

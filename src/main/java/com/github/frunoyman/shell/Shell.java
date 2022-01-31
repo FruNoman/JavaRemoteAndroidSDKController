@@ -25,9 +25,9 @@ public abstract class Shell {
 
     };
 
-    public abstract String execute(String... command) throws Exception;
+    public abstract String execute(String... command);
 
-    public abstract String executeBroadcast(String... command) throws Exception;
+    public abstract String executeBroadcast(String... command);
 
     public abstract String getSerial();
 
