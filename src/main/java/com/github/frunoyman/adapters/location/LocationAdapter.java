@@ -16,28 +16,28 @@ import java.util.Arrays;
 import java.util.List;
 
 public class LocationAdapter extends BaseAdapter {
-    private final String BLUETOOTH_COMMAND = "location_command ";
-    private final String BLUETOOTH_REMOTE = "com.github.remotesdk.LOCATION_REMOTE";
+    private final String LOCATION_COMMAND = "location_command ";
+    private final String LOCATION_REMOTE = "com.github.remotesdk.LOCATION_REMOTE";
     private Logger logger;
 
 
     private final String AM_COMMAND = BROADCAST
-            + BLUETOOTH_REMOTE
+            + LOCATION_REMOTE
             + ES
-            + BLUETOOTH_COMMAND;
+            + LOCATION_COMMAND;
 
-    private final String IS_ENABLE = "isLocationEnabled";
-    private final String SET_LOCATION_STATE = "setLocationState,";
-    private final String GET_ALL_PROVIDERS = "getAllProviders";
-    private final String GET_LAST_KNOWN_LOCATION = "getLastKnownLocation";
-    private final String REQUEST_LOCATION_UPDATES = "requestLocationUpdates";
-    private final String REMOVE_LOCATION_UPDATES = "removeUpdates";
+    private final String IS_ENABLE = AM_COMMAND + "isLocationEnabled";
+    private final String SET_LOCATION_STATE = AM_COMMAND + "setLocationState,";
+    private final String GET_ALL_PROVIDERS = AM_COMMAND + "getAllProviders";
+    private final String GET_LAST_KNOWN_LOCATION = AM_COMMAND + "getLastKnownLocation,";
+    private final String REQUEST_LOCATION_UPDATES = AM_COMMAND + "requestLocationUpdates,";
+    private final String GET_UPDATED_LOCATION_LIST = AM_COMMAND + "getUpdatedLocations";
+    private final String REMOVE_LOCATION_UPDATES = AM_COMMAND + "removeUpdates";
 
-    private final String GET_UPDATED_LOCATION_LIST = "getUpdatedLocations";
+    private final String GET_SATELLITE_COUNT = AM_COMMAND + "getSatelliteCount";
+    private final String GET_CONSTELLATION_TYPE = AM_COMMAND + "getConstellationType,";
+    private final String USED_IN_FIX = AM_COMMAND + "usedInFix,";
 
-    private final String GET_SATELLITE_COUNT = "getSatelliteCount";
-    private final String GET_CONSTELLATION_TYPE = "getConstellationType";
-    private final String USED_IN_FIX = "usedInFix";
 
     public enum Provider {
         GPS_PROVIDER("gps"),
@@ -57,8 +57,38 @@ public class LocationAdapter extends BaseAdapter {
 
         public static LocationAdapter.Provider getProviderName(String providerName) {
             for (LocationAdapter.Provider provider : values()) {
-                if (provider.getProviderName() == providerName) {
+                if (provider.getProviderName().equals(providerName)) {
                     return provider;
+                }
+            }
+            return null;
+        }
+    }
+
+    public enum ConstellationType {
+        CONSTELLATION_UNKNOWN(0),
+        CONSTELLATION_GPS(1),
+        CONSTELLATION_SBAS(2),
+        CONSTELLATION_GLONASS(3),
+        CONSTELLATION_QZSS(4),
+        CONSTELLATION_BEIDOU(5),
+        CONSTELLATION_GALILEO(6),
+        CONSTELLATION_IRNSS(7);
+
+        private int constellationType;
+
+        ConstellationType(int constellationType) {
+            this.constellationType = constellationType;
+        }
+
+        public int getConstellationType() {
+            return constellationType;
+        }
+
+        public static LocationAdapter.ConstellationType getConstellationType(int constellationType) {
+            for (LocationAdapter.ConstellationType type : values()) {
+                if (type.getConstellationType() == constellationType) {
+                    return type;
                 }
             }
             return null;
@@ -67,7 +97,7 @@ public class LocationAdapter extends BaseAdapter {
 
     public LocationAdapter(Shell shell) {
         super(shell);
-        logger = Logger.getLogger(BluetoothAdapter.class.getName() + "] [" + shell.getSerial());
+        logger = Logger.getLogger(LocationAdapter.class.getName() + "] [" + shell.getSerial());
     }
 
     public boolean isLocationEnabled() {
@@ -78,7 +108,7 @@ public class LocationAdapter extends BaseAdapter {
 
     public boolean setLocationState(boolean state) {
         boolean result = Boolean.parseBoolean(shell.executeBroadcast(SET_LOCATION_STATE + state));
-        logger.debug("set location state [" + state + "] [" + result + "]");
+        logger.debug("set location state [" + state + "] return [" + result + "]");
         return result;
     }
 
@@ -109,5 +139,58 @@ public class LocationAdapter extends BaseAdapter {
         }
         logger.debug("get provider [" + provider.getProviderName() + "] last known location [" + location + "]");
         return location;
+    }
+
+    public void requestLocationUpdates(Provider provider) {
+        shell.execute("am start -n com.github.remotesdk/.MainActivity --activity-single-top --activity-clear-when-task-reset");
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        shell.executeBroadcast(REQUEST_LOCATION_UPDATES + provider.getProviderName());
+        logger.debug("request location updates");
+    }
+
+    public List<Location> getUpdatedLocations() {
+        List<Location> locations = new ArrayList<>();
+        String result = shell.executeBroadcast(GET_UPDATED_LOCATION_LIST);
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
+        mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+        mapper.disable(MapperFeature.AUTO_DETECT_GETTERS);
+        try {
+            locations = Arrays.asList(mapper.readValue(result, Location[].class));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        logger.debug("get updated locations");
+        return locations;
+    }
+
+    public void removeUpdates() {
+        shell.executeBroadcast(REMOVE_LOCATION_UPDATES);
+        logger.debug("remove location updates");
+    }
+
+    public int getSatelliteCount() {
+        int result = Integer.parseInt(shell.executeBroadcast(GET_SATELLITE_COUNT));
+        logger.debug("get satellite count return [" + result + "]");
+        return result;
+    }
+
+    public boolean usedInFix(int satelliteIndex) {
+        boolean result = Boolean.parseBoolean(shell.executeBroadcast(USED_IN_FIX + satelliteIndex));
+        logger.debug("used satellite  [" + satelliteIndex + "] in fix return [" + result + "]");
+        return result;
+    }
+
+    public ConstellationType getConstellationType(int satelliteIndex) {
+        ConstellationType result = ConstellationType.getConstellationType(
+                Integer.parseInt(shell.executeBroadcast(
+                        GET_CONSTELLATION_TYPE + satelliteIndex)));
+        logger.debug("get satellite  [" + satelliteIndex + "] constellation type return [" + result.name() + "]");
+        return result;
     }
 }
