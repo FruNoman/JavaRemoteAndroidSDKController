@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Telecom extends BaseAdapter {
+public class TelecomAdapter extends BaseAdapter {
     public static final String TELEPHONY_COMMAND = "telephony_remote ";
     public static final String TELEPHONY_REMOTE = "com.github.remotesdk.TELEPHONY_REMOTE";
     private Logger logger;
@@ -55,9 +55,9 @@ public class Telecom extends BaseAdapter {
 
 
 
-    public Telecom(Shell shell) {
+    public TelecomAdapter(Shell shell) {
         super(shell);
-        logger = Logger.getLogger(Telecom.class.getName() + "] [" + shell.getSerial());
+        logger = Logger.getLogger(TelecomAdapter.class.getName() + "] [" + shell.getSerial());
     }
 
     public enum CallState {

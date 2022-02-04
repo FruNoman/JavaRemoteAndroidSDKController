@@ -5,7 +5,8 @@ import com.github.frunoyman.adapters.bluetooth.BluetoothAdapter;
 import com.github.frunoyman.adapters.environment.EnvironmentAdapter;
 import com.github.frunoyman.adapters.environment.RemoteFile;
 import com.github.frunoyman.adapters.location.LocationAdapter;
-import com.github.frunoyman.adapters.telephony.Telecom;
+import com.github.frunoyman.adapters.player.PlayerAdapter;
+import com.github.frunoyman.adapters.telephony.TelecomAdapter;
 import com.github.frunoyman.adapters.usb.Usb;
 import com.github.frunoyman.adapters.wifi.Wifi;
 import com.github.frunoyman.shell.DDMLibShell;
@@ -30,8 +31,8 @@ public class DDMLibRemoteSdk extends BaseSdk {
     }
 
     @Override
-    public Telecom getTelecomAdapter() {
-        return new Telecom(shell);
+    public TelecomAdapter getTelecomAdapter() {
+        return new TelecomAdapter(shell);
     }
 
     @Override
@@ -52,6 +53,11 @@ public class DDMLibRemoteSdk extends BaseSdk {
     @Override
     public LocationAdapter getLocationAdapter() {
         return new LocationAdapter(shell);
+    }
+
+    @Override
+    public PlayerAdapter getPlayerAdapter() {
+        return new PlayerAdapter(shell);
     }
 
     @Override

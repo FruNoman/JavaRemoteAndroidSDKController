@@ -4,7 +4,7 @@ import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.IDevice;
 import com.github.frunoyman.adapters.telephony.CallHistory;
 import com.github.frunoyman.adapters.telephony.Contact;
-import com.github.frunoyman.adapters.telephony.Telecom;
+import com.github.frunoyman.adapters.telephony.TelecomAdapter;
 import com.github.frunoyman.controllers.DDMLibRemoteSdk;
 import com.github.frunoyman.waiter.RemoteWaiter;
 import org.junit.Assert;
@@ -19,7 +19,7 @@ public class TelephonyDDMLIBTests {
     private static Object monitor = new Object();
     private IDevice device;
     private RemoteWaiter waiter;
-    private Telecom telecom;
+    private TelecomAdapter telecomAdapter;
 
     @Before
     public void beforeTest() throws InterruptedException {
@@ -52,42 +52,42 @@ public class TelephonyDDMLIBTests {
         device = devices.get(0);
         DDMLibRemoteSdk DDMLibRemoteSDK = new DDMLibRemoteSdk(device);
         waiter = new RemoteWaiter(DDMLibRemoteSDK, 15);
-        telecom = DDMLibRemoteSDK.getTelecomAdapter();
+        telecomAdapter = DDMLibRemoteSDK.getTelecomAdapter();
     }
 
     @Test
     public void telephonyCallHistoryTests() throws Exception {
-        for (CallHistory callHistory :telecom.getCallHistory()){
+        for (CallHistory callHistory : telecomAdapter.getCallHistory()){
             System.out.println(callHistory);
         }
     }
 
     @Test
     public void telephonyContactsTests() throws Exception {
-        for (Contact contact :telecom.getContacts()){
+        for (Contact contact : telecomAdapter.getContacts()){
             System.out.println(contact);
         }
     }
 
     @Test
     public void getMobilePhone() throws Exception {
-        Assert.assertFalse(telecom.getMobilePhone().isEmpty());
+        Assert.assertFalse(telecomAdapter.getMobilePhone().isEmpty());
     }
 
     @Test
     public void sendUssdTest() throws Exception {
-        String result = telecom.sendUssdRequest("*161#");
+        String result = telecomAdapter.sendUssdRequest("*161#");
         System.out.println(result);
-        telecom.getNetworkOperatorName();
-        telecom.getDataState();
-        telecom.getDataNetworkType();
-        telecom.getPhoneType();
-        telecom.getSimState();
-        telecom.getCallState();
-        telecom.call("466");
+        telecomAdapter.getNetworkOperatorName();
+        telecomAdapter.getDataState();
+        telecomAdapter.getDataNetworkType();
+        telecomAdapter.getPhoneType();
+        telecomAdapter.getSimState();
+        telecomAdapter.getCallState();
+        telecomAdapter.call("466");
         Thread.sleep(2000);
-        telecom.getCallState();
+        telecomAdapter.getCallState();
         Thread.sleep(3000);
-        telecom.endCall();
+        telecomAdapter.endCall();
     }
 }
