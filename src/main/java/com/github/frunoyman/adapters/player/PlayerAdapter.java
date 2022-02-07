@@ -213,7 +213,7 @@ public class PlayerAdapter extends BaseAdapter {
     }
 
     public String getCurrentPlayMediaMetaData(MetaData metaData) {
-        RemoteFile file = getCurrentPlayingFile();
+        String file = getCurrentPlayingFile().getAbsolutePath();
         String result = shell.executeBroadcast(GET_MEDIA_METADATA + file + "," + metaData.getMetaData());
         logger.debug("get current play media metadata  [" + metaData.name() + "] return [" + result + "]");
         return result;

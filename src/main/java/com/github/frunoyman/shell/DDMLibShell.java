@@ -25,7 +25,7 @@ public class DDMLibShell extends Shell {
     }
 
 
-    public String execute(String... command){
+    public String execute(String... command) {
         StringBuilder commandBuilder = new StringBuilder();
         for (String var : command) {
             commandBuilder.append(var);
@@ -52,12 +52,12 @@ public class DDMLibShell extends Shell {
             logger.debug("Remote controller apk was not found, installing ...");
             File apk = getApk();
             try {
-                iDevice.installPackage(apk.getAbsolutePath(), false,"-g");
+                iDevice.installPackage(apk.getAbsolutePath(), false, "-g");
             } catch (InstallException e) {
                 e.printStackTrace();
             }
-            for (String permission:permissions){
-                execute("pm grant com.github.remotesdk "+permission);
+            for (String permission : permissions) {
+                execute("pm grant com.github.remotesdk " + permission);
             }
         }
         if (!execute("ps -A").contains(REMOTE_PACKAGE)) {
@@ -95,10 +95,13 @@ public class DDMLibShell extends Shell {
             if (output.contains("result=" + ERROR_CODE)) {
                 throw new RuntimeException("Broadcast error");
             } else if (output.contains("result=" + SUCCESS_CODE)) {
-                return m.group(3);
+                return m.group(1);
+
             }
         } else if (output.contains("result=" + EMPTY_BROADCAST_CODE)) {
             throw new RuntimeException("Empty broadcast error");
+        }else if(!output.contains("data=\"") && output.contains("result=" + SUCCESS_CODE)){
+            return "";
         }
         return output;
     }

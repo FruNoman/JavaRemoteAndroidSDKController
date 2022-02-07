@@ -111,6 +111,8 @@ public class PlayerAdapterTest {
 
         String currentFile = playerAdapter.getCurrentPlayingFile().getAbsolutePath();
 
+        System.out.println(playerAdapter.getCurrentPlayMediaMetaData(PlayerAdapter.MetaData.METADATA_KEY_ALBUM));
+
         playerAdapter.next();
 
         Thread.sleep(5000);
