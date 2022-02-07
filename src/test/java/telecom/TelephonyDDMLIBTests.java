@@ -76,18 +76,25 @@ public class TelephonyDDMLIBTests {
 
     @Test
     public void sendUssdTest() throws Exception {
-        String result = telecomAdapter.sendUssdRequest("*161#");
-        System.out.println(result);
-        telecomAdapter.getNetworkOperatorName();
-        telecomAdapter.getDataState();
-        telecomAdapter.getDataNetworkType();
-        telecomAdapter.getPhoneType();
-        telecomAdapter.getSimState();
-        telecomAdapter.getCallState();
-        telecomAdapter.call("466");
-        Thread.sleep(2000);
-        telecomAdapter.getCallState();
-        Thread.sleep(3000);
-        telecomAdapter.endCall();
+//        telecomAdapter.sendSMS("+380672244346","test test");
+        while (!telecomAdapter.isSMSReceived()){
+            Thread.sleep(1000);
+        }
+        System.out.println(telecomAdapter.getLastSMSNumber());
+        System.out.println(telecomAdapter.getLastSMSText());
+
+//        String result = telecomAdapter.sendUssdRequest("*161#");
+//        System.out.println(result);
+//        telecomAdapter.getNetworkOperatorName();
+//        telecomAdapter.getDataState();
+//        telecomAdapter.getDataNetworkType();
+//        telecomAdapter.getPhoneType();
+//        telecomAdapter.getSimState();
+//        telecomAdapter.getCallState();
+//        telecomAdapter.call("466");
+//        Thread.sleep(2000);
+//        telecomAdapter.getCallState();
+//        Thread.sleep(3000);
+//        telecomAdapter.endCall();
     }
 }
