@@ -10,47 +10,42 @@ import java.util.Arrays;
 import java.util.List;
 
 public class TelecomAdapter extends BaseAdapter {
-    public static final String TELEPHONY_COMMAND = "telephony_command ";
     public static final String TELEPHONY_REMOTE = "com.github.remotesdk.TELEPHONY_REMOTE";
     private Logger logger;
 
-    private final String AM_COMMAND = BROADCAST
-            + TELEPHONY_REMOTE
-            + ES
-            + TELEPHONY_COMMAND;
+    private final String TELEPHONY_BROADCAST = BROADCAST + TELEPHONY_REMOTE;
 
-    private final String GET_CALL_STATE = AM_COMMAND + "getCallState";
-    private final String GET_CALL_HISTORY = AM_COMMAND + "getCallHistory";
-    private final String GET_CONTACTS = AM_COMMAND + "getContacts";
-    private final String CALL = AM_COMMAND + "callNumber,";
-    private final String END_CALL = AM_COMMAND + "endCallProgrammatically";
-    private final String ANSWER_RINGING_CALL = AM_COMMAND + "answerRingingCall";
-    private final String GET_INCOMING_CALL_NUMBER = AM_COMMAND + "getIncomingCallNumber";
-    private final String SET_DATA_ENABLED = AM_COMMAND + "setDataEnabled,";
-    private final String IS_DATA_ENABLED = AM_COMMAND + "isDataEnabled";
-    private final String GET_DATA_STATE = AM_COMMAND + "getDataState";
-    private final String GET_DATA_NETWORK_TYPE = AM_COMMAND + "getDataNetworkType";
-    private final String GET_PHONE_TYPE = AM_COMMAND + "getPhoneType";
-    private final String GET_SIM_STATE = AM_COMMAND + "getSimState";
-    private final String GET_NETWORK_OPERATOR_NAME = AM_COMMAND + "getNetworkOperatorName";
-    private final String SEND_USSD_REQUEST = AM_COMMAND + "sendUssdRequest,";
-    private final String GET_USSD_RESPONSE = AM_COMMAND + "getUssdResponse";
-    private final String GET_MOBILE_PHONE = AM_COMMAND + "getMobilePhone";
+    private final String GET_CALL_STATE = "getCallState";
+    private final String GET_CALL_HISTORY = "getCallHistory";
+    private final String GET_CONTACTS = "getContacts";
+    private final String CALL = "callNumber";
+    private final String END_CALL = "endCallProgrammatically";
+    private final String ANSWER_RINGING_CALL = "answerRingingCall";
+    private final String GET_INCOMING_CALL_NUMBER = "getIncomingCallNumber";
+    private final String SET_DATA_ENABLED = "setDataEnabled";
+    private final String IS_DATA_ENABLED = "isDataEnabled";
+    private final String GET_DATA_STATE = "getDataState";
+    private final String GET_DATA_NETWORK_TYPE = "getDataNetworkType";
+    private final String GET_PHONE_TYPE = "getPhoneType";
+    private final String GET_SIM_STATE = "getSimState";
+    private final String GET_NETWORK_OPERATOR_NAME = "getNetworkOperatorName";
+    private final String SEND_USSD_REQUEST = "sendUssdRequest";
+    private final String GET_USSD_RESPONSE = "getUssdResponse";
+    private final String GET_MOBILE_PHONE = "getMobilePhone";
+    private final String GET_CONTACTS_SIZE = "getContactsSize";
+    private final String GET_CALL_HISTORY_SIZE = "getCallHistorySize";
+    private final String SEND_SMS = "sendSMS";
+    private final String IS_SMS_RECEIVED = "isSMSReceived";
+    private final String CONTACT_GENERATOR = "contactGeneratorProgram";
+    private final String GET_LAST_SMS_NUMBER = "getLastSMSNumber";
+    private final String GET_LAST_SMS_TEXT = "getLastSMSText";
+    private final String IS_MAP_PROFILE_MESSAGE_RECEIVED = "isMAPProfileMessageReceived";
+    private final String GET_LAST_MAP_PROFILE_SMS_NUMBER = "getLastMAPProfileSMSNumber";
+    private final String GET_LAST_MAP_PROFILE_SMS_TEXT = "getLastMAPProfileSMSText";
 
-    private final String GET_CONTACTS_SIZE = AM_COMMAND + "getContactsSize";
-    private final String GET_CALL_HISTORY_SIZE = AM_COMMAND + "getCallHistorySize";
-    private final String SEND_SMS = AM_COMMAND + "sendSMS,";
-    private final String IS_SMS_RECEIVED = AM_COMMAND + "isSMSReceived";
-    private final String CONTACT_GENERATOR = AM_COMMAND + "contactGeneratorProgram,";
-    private final String GET_LAST_SMS_NUMBER = AM_COMMAND + "getLastSMSNumber";
-    private final String GET_LAST_SMS_TEXT = AM_COMMAND + "getLastSMSText";
-    private final String IS_MAP_PROFILE_MESSAGE_RECEIVED = AM_COMMAND + "isMAPProfileMessageReceived";
-    private final String GET_LAST_MAP_PROFILE_SMS_NUMBER = AM_COMMAND + "getLastMAPProfileSMSNumber";
-    private final String GET_LAST_MAP_PROFILE_SMS_TEXT = AM_COMMAND + "getLastMAPProfileSMSText";
-
-    private final String GET_LAST_MAP_PROFILE_SMS_URI = AM_COMMAND + "getLastMAPProfileSMSURI";
-    private final String GET_CONTACT_IMAGE = AM_COMMAND + "getContactImage";
-    private final String CREATE_CONTACT = AM_COMMAND + "createContactProgrammatically";
+    private final String GET_LAST_MAP_PROFILE_SMS_URI = "getLastMAPProfileSMSURI";
+    private final String GET_CONTACT_IMAGE = "getContactImage";
+    private final String CREATE_CONTACT = "createContactProgrammatically";
 
 
     public TelecomAdapter(Shell shell) {
@@ -220,7 +215,7 @@ public class TelecomAdapter extends BaseAdapter {
 
     public List<CallHistory> getCallHistory() {
         List<CallHistory> callHistories = new ArrayList<>();
-        String result = shell.executeBroadcast(GET_CALL_HISTORY);
+        String result = shell.executeBroadcastExtended(TELEPHONY_BROADCAST, GET_CALL_HISTORY);
         ObjectMapper mapper = new ObjectMapper();
         try {
             callHistories = Arrays.asList(mapper.readValue(result, CallHistory[].class));
@@ -233,7 +228,7 @@ public class TelecomAdapter extends BaseAdapter {
 
     public List<Contact> getContacts() {
         List<Contact> contacts = new ArrayList<>();
-        String result = shell.executeBroadcast(GET_CONTACTS);
+        String result = shell.executeBroadcastExtended(TELEPHONY_BROADCAST, GET_CONTACTS);
         ObjectMapper mapper = new ObjectMapper();
         try {
             contacts = Arrays.asList(mapper.readValue(result, Contact[].class));
@@ -245,150 +240,150 @@ public class TelecomAdapter extends BaseAdapter {
     }
 
     public String sendUssdRequest(String ussd) {
-        shell.executeBroadcast(SEND_USSD_REQUEST + ussd);
+        shell.executeBroadcastExtended(TELEPHONY_BROADCAST, SEND_USSD_REQUEST, ussd);
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         String result = getUssdResponce();
-        logger.debug("send USSD request [" + ussd + "] [" + result + "]");
+        logger.debug("send USSD request [" + ussd + "] return [" + result + "]");
         return result;
     }
 
     public String getMobilePhone() {
-        String result = shell.executeBroadcast(GET_MOBILE_PHONE);
-        logger.debug("get mobile phone [" + result + "]");
+        String result = shell.executeBroadcastExtended(TELEPHONY_BROADCAST, GET_MOBILE_PHONE);
+        logger.debug("get mobile phone return [" + result + "]");
         return result;
     }
 
     private String getUssdResponce() {
-        String result = shell.executeBroadcast(GET_USSD_RESPONSE);
+        String result = shell.executeBroadcastExtended(TELEPHONY_BROADCAST, GET_USSD_RESPONSE);
         return result;
     }
 
     public void call(String number) {
-        shell.execute(CALL + number);
+        shell.executeBroadcastExtended(TELEPHONY_BROADCAST,CALL , number);
         logger.debug("call number [" + number + "]");
     }
 
     public void endCall() {
-        shell.executeBroadcast(END_CALL);
+        shell.executeBroadcastExtended(TELEPHONY_BROADCAST, END_CALL);
         logger.debug("end call");
     }
 
     public void answerIncomingCall() {
-        shell.executeBroadcast(ANSWER_RINGING_CALL);
+        shell.executeBroadcastExtended(TELEPHONY_BROADCAST, ANSWER_RINGING_CALL);
         logger.debug("answer incoming call");
     }
 
     public String getIncomingCallNumber() {
-        String result = shell.executeBroadcast(GET_INCOMING_CALL_NUMBER);
-        logger.debug("get incoming call number [" + result + "]");
+        String result = shell.executeBroadcastExtended(TELEPHONY_BROADCAST, GET_INCOMING_CALL_NUMBER);
+        logger.debug("get incoming call number return [" + result + "]");
         return result;
     }
 
     public String getNetworkOperatorName() {
-        String result = shell.executeBroadcast(GET_NETWORK_OPERATOR_NAME);
-        logger.debug("get network operator name [" + result + "]");
+        String result = shell.executeBroadcastExtended(TELEPHONY_BROADCAST, GET_NETWORK_OPERATOR_NAME);
+        logger.debug("get network operator name return [" + result + "]");
         return result;
     }
 
     public boolean isDataEnabled() {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(IS_DATA_ENABLED));
-        logger.debug("is data enabled [" + result + "]");
+        boolean result = Boolean.parseBoolean(shell.executeBroadcastExtended(TELEPHONY_BROADCAST, IS_DATA_ENABLED));
+        logger.debug("is data enabled return [" + result + "]");
         return result;
     }
 
     public void setDataEnabled(boolean state) {
-        shell.executeBroadcast(SET_DATA_ENABLED + state);
+        shell.executeBroadcastExtended(TELEPHONY_BROADCAST, SET_DATA_ENABLED, state);
         logger.debug("set data enabled [" + state + "]");
     }
 
     public DataState getDataState() {
-        DataState result = DataState.getDataState(Integer.parseInt(shell.executeBroadcast(GET_DATA_STATE)));
-        logger.debug("get data state [" + result.name() + "]");
+        DataState result = DataState.getDataState(Integer.parseInt(shell.executeBroadcastExtended(TELEPHONY_BROADCAST, GET_DATA_STATE)));
+        logger.debug("get data state return [" + result.name() + "]");
         return result;
     }
 
     public DataNetworkType getDataNetworkType() {
-        DataNetworkType result = DataNetworkType.getNetworkType(Integer.parseInt(shell.executeBroadcast(GET_DATA_NETWORK_TYPE)));
-        logger.debug("get data network type [" + result.name() + "]");
+        DataNetworkType result = DataNetworkType.getNetworkType(Integer.parseInt(shell.executeBroadcastExtended(TELEPHONY_BROADCAST, GET_DATA_NETWORK_TYPE)));
+        logger.debug("get data network type return [" + result.name() + "]");
         return result;
     }
 
     public PhoneType getPhoneType() {
-        PhoneType result = PhoneType.getPhoneType(Integer.parseInt(shell.executeBroadcast(GET_PHONE_TYPE)));
-        logger.debug("get phone type [" + result.name() + "]");
+        PhoneType result = PhoneType.getPhoneType(Integer.parseInt(shell.executeBroadcastExtended(TELEPHONY_BROADCAST, GET_PHONE_TYPE)));
+        logger.debug("get phone type return [" + result.name() + "]");
         return result;
     }
 
     public SimState getSimState() {
-        SimState result = SimState.getSimState(Integer.parseInt(shell.executeBroadcast(GET_SIM_STATE)));
-        logger.debug("get sim state [" + result.name() + "]");
+        SimState result = SimState.getSimState(Integer.parseInt(shell.executeBroadcastExtended(TELEPHONY_BROADCAST, GET_SIM_STATE)));
+        logger.debug("get sim state return [" + result.name() + "]");
         return result;
     }
 
     public CallState getCallState() {
-        CallState result = CallState.getCallState(Integer.parseInt(shell.executeBroadcast(GET_CALL_STATE)));
-        logger.debug("get call state [" + result.name() + "]");
+        CallState result = CallState.getCallState(Integer.parseInt(shell.executeBroadcastExtended(TELEPHONY_BROADCAST, GET_CALL_STATE)));
+        logger.debug("get call state return [" + result.name() + "]");
         return result;
     }
 
     public void sendSMS(String number, String text) {
-        shell.executeBroadcast(SEND_SMS + number + ",'" + text + "'");
+        shell.executeBroadcastExtended(TELEPHONY_BROADCAST, SEND_SMS, number, text);
         logger.debug("send SMS to  [" + number + "] with text [" + text + "]");
     }
 
     public boolean isSMSReceived() {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(IS_SMS_RECEIVED));
-        logger.debug("is SMS received return ["+result+"]");
+        boolean result = Boolean.parseBoolean(shell.executeBroadcastExtended(TELEPHONY_BROADCAST, IS_SMS_RECEIVED));
+        logger.debug("is SMS received return [" + result + "]");
         return result;
     }
 
     public int getContactsSize() {
-        int result = Integer.parseInt(shell.executeBroadcast(GET_CONTACTS_SIZE));
+        int result = Integer.parseInt(shell.executeBroadcastExtended(TELEPHONY_BROADCAST, GET_CONTACTS_SIZE));
         logger.debug("get contacts size return [" + result + "]");
         return result;
     }
 
     public int getCallHistorySize() {
-        int result = Integer.parseInt(shell.executeBroadcast(GET_CALL_HISTORY_SIZE));
+        int result = Integer.parseInt(shell.executeBroadcastExtended(TELEPHONY_BROADCAST, GET_CALL_HISTORY_SIZE));
         logger.debug("get call history size return [" + result + "]");
         return result;
     }
 
-    public void generateContacts(int number){
-        shell.executeBroadcast(CONTACT_GENERATOR+number);
+    public void generateContacts(int number) {
+        shell.executeBroadcastExtended(TELEPHONY_BROADCAST, CONTACT_GENERATOR, number);
         logger.debug("generate contacts [" + number + "]");
     }
 
-    public String getLastSMSNumber(){
-        String result = shell.executeBroadcast(GET_LAST_SMS_NUMBER);
+    public String getLastSMSNumber() {
+        String result = shell.executeBroadcastExtended(TELEPHONY_BROADCAST, GET_LAST_SMS_NUMBER);
         logger.debug("get last SMS number return [" + result + "]");
         return result;
     }
 
-    public String getLastSMSText(){
-        String result = shell.executeBroadcast(GET_LAST_SMS_TEXT);
+    public String getLastSMSText() {
+        String result = shell.executeBroadcastExtended(TELEPHONY_BROADCAST, GET_LAST_SMS_TEXT);
         logger.debug("get last SMS text return [" + result + "]");
         return result;
     }
 
     public boolean isMAPProfileMessageReceived() {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(IS_MAP_PROFILE_MESSAGE_RECEIVED));
-        logger.debug("is MAP profile message received return ["+result+"]");
+        boolean result = Boolean.parseBoolean(shell.executeBroadcastExtended(TELEPHONY_BROADCAST, IS_MAP_PROFILE_MESSAGE_RECEIVED));
+        logger.debug("is MAP profile message received return [" + result + "]");
         return result;
     }
 
-    public String getLastMAPProfileSMSNumber(){
-        String result = shell.executeBroadcast(GET_LAST_MAP_PROFILE_SMS_NUMBER);
+    public String getLastMAPProfileSMSNumber() {
+        String result = shell.executeBroadcastExtended(TELEPHONY_BROADCAST, GET_LAST_MAP_PROFILE_SMS_NUMBER);
         logger.debug("get last MAP profile SMS number return [" + result + "]");
         return result;
     }
 
-    public String getLastMAPProfileSMSText(){
-        String result = shell.executeBroadcast(GET_LAST_MAP_PROFILE_SMS_TEXT);
+    public String getLastMAPProfileSMSText() {
+        String result = shell.executeBroadcastExtended(TELEPHONY_BROADCAST, GET_LAST_MAP_PROFILE_SMS_TEXT);
         logger.debug("get last MAP profile SMS text return [" + result + "]");
         return result;
     }

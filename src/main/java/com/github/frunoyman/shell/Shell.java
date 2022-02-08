@@ -27,7 +27,7 @@ public abstract class Shell {
 
     public abstract String execute(String... command);
 
-    public abstract String executeBroadcast(String... command);
+    public abstract String executeBroadcastExtended(String broadcast, String command, Object... params);
 
     public abstract String getSerial();
 

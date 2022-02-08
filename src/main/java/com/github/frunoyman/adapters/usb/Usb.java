@@ -10,29 +10,24 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Usb extends BaseAdapter {
-    public static final String USB_COMMAND = "usb_remote ";
     public static final String USB_REMOTE = "com.github.remotesdk.USB_REMOTE";
     private Logger logger;
 
 
-    private final String AM_COMMAND = BROADCAST
-            + USB_REMOTE
-            + ES
-            + USB_COMMAND;
+    private final String USB_BROADCAST = BROADCAST + USB_REMOTE;
 
-    private final String GET_DEVICE_LIST = AM_COMMAND
-            + "getDeviceList";
-    private final String GET_INPUT_DEVICE_LIST = AM_COMMAND
-            + "getInputDeviceList";
+
+    private final String GET_DEVICE_LIST = "getDeviceList";
+    private final String GET_INPUT_DEVICE_LIST = "getInputDeviceList";
 
     public Usb(Shell shell) {
         super(shell);
         logger = Logger.getLogger(Usb.class.getName() + "] [" + shell.getSerial());
     }
 
-    public List<UsbDevice> getDeviceList() throws Exception {
+    public List<UsbDevice> getDeviceList(){
         List<UsbDevice> devices = new ArrayList<>();
-        String result = shell.executeBroadcast(GET_DEVICE_LIST);
+        String result = shell.executeBroadcastExtended(USB_BROADCAST,GET_DEVICE_LIST);
         ObjectMapper mapper = new ObjectMapper();
         try {
             devices = Arrays.asList(mapper.readValue(result, UsbDevice[].class));
@@ -42,9 +37,9 @@ public class Usb extends BaseAdapter {
         return devices;
     }
 
-    public List<InputDevice> getInputDeviceList() throws Exception {
+    public List<InputDevice> getInputDeviceList(){
         List<InputDevice> devices = new ArrayList<>();
-        String result = shell.executeBroadcast(GET_INPUT_DEVICE_LIST);
+        String result = shell.executeBroadcastExtended(USB_BROADCAST,GET_INPUT_DEVICE_LIST);
         ObjectMapper mapper = new ObjectMapper();
         try {
             devices = Arrays.asList(mapper.readValue(result, InputDevice[].class));

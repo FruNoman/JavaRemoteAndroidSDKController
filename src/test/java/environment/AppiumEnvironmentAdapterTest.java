@@ -5,7 +5,6 @@ import com.github.frunoyman.adapters.environment.EnvironmentAdapter;
 import com.github.frunoyman.adapters.environment.RemoteFile;
 import com.github.frunoyman.adapters.environment.StorageVolume;
 import com.github.frunoyman.controllers.AppiumRemoteSdk;
-import com.github.frunoyman.waiter.RemoteWaiter;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.MobileCapabilityType;
@@ -21,7 +20,6 @@ import java.net.URL;
 public class AppiumEnvironmentAdapterTest {
     private AndroidDriver driver;
     private BluetoothAdapter bluetoothAdapter;
-    private RemoteWaiter waiter;
     private AppiumRemoteSdk remoteSdk;
     @Before
     public void beforeAppiumTest() throws MalformedURLException {
@@ -33,7 +31,6 @@ public class AppiumEnvironmentAdapterTest {
         driver = new AndroidDriver(new URL("http://0.0.0.0:4723/wd/hub"), desiredCapabilities);
         remoteSdk = new AppiumRemoteSdk(driver);
         bluetoothAdapter = remoteSdk.getBluetoothAdapter();
-        waiter = new RemoteWaiter(remoteSdk, 15);
     }
 
     @Test

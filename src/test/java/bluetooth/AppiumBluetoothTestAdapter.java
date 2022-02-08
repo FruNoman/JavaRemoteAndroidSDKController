@@ -4,8 +4,6 @@ import com.github.frunoyman.adapters.bluetooth.BluetoothAdapter;
 import com.github.frunoyman.adapters.bluetooth.BluetoothDevice;
 import com.github.frunoyman.adapters.bluetooth.BluetoothProfile;
 import com.github.frunoyman.controllers.AppiumRemoteSdk;
-import com.github.frunoyman.waiter.BluetoothExpectedConditions;
-import com.github.frunoyman.waiter.RemoteWaiter;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.MobileCapabilityType;
@@ -22,7 +20,6 @@ import java.util.List;
 public class AppiumBluetoothTestAdapter {
     private AndroidDriver driver;
     private BluetoothAdapter bluetoothAdapter;
-    private RemoteWaiter waiter;
 
     @Before
     public void beforeAppiumTest() throws MalformedURLException {
@@ -34,16 +31,13 @@ public class AppiumBluetoothTestAdapter {
         driver = new AndroidDriver(new URL("http://0.0.0.0:4723/wd/hub"), desiredCapabilities);
         AppiumRemoteSdk remoteSdk = new AppiumRemoteSdk(driver);
         bluetoothAdapter = remoteSdk.getBluetoothAdapter();
-        waiter = new RemoteWaiter(remoteSdk, 15);
     }
 
     @Test
-    public void bluetoothEnableDisable() {
+    public void bluetoothEnableDisable() throws InterruptedException {
         bluetoothAdapter.enable();
 
-        waiter.until(
-                BluetoothExpectedConditions.state(BluetoothAdapter.State.STATE_ON)
-        );
+        Thread.sleep(2000);
 
 
         Assert.assertEquals(
@@ -57,9 +51,7 @@ public class AppiumBluetoothTestAdapter {
 
         bluetoothAdapter.disable();
 
-        waiter.until(
-                BluetoothExpectedConditions.state(BluetoothAdapter.State.STATE_OFF)
-        );
+        Thread.sleep(2000);
 
         Assert.assertEquals(
                 bluetoothAdapter.getState(),
@@ -72,12 +64,10 @@ public class AppiumBluetoothTestAdapter {
     }
 
     @Test
-    public void bluetoothDiscoverable() {
+    public void bluetoothDiscoverable() throws InterruptedException {
         bluetoothAdapter.enable();
 
-        waiter.until(
-                BluetoothExpectedConditions.state(BluetoothAdapter.State.STATE_ON)
-        );
+        Thread.sleep(2000);
 
         Assert.assertEquals(
                 bluetoothAdapter.getState(),
@@ -85,9 +75,7 @@ public class AppiumBluetoothTestAdapter {
         );
 
         bluetoothAdapter.startDiscoverable(120);
-        waiter.until(
-                BluetoothExpectedConditions.discoverable()
-        );
+        Thread.sleep(2000);
 
         Assert.assertTrue(
                 bluetoothAdapter.isDiscoverable()
@@ -100,9 +88,7 @@ public class AppiumBluetoothTestAdapter {
 
         bluetoothAdapter.stopDiscoverable();
 
-        waiter.until(
-                BluetoothExpectedConditions.stopDiscoverable()
-        );
+        Thread.sleep(2000);
 
         Assert.assertFalse(
                 bluetoothAdapter.isDiscoverable()
@@ -116,12 +102,10 @@ public class AppiumBluetoothTestAdapter {
     }
 
     @Test
-    public void bluetoothChangeNameTest() {
+    public void bluetoothChangeNameTest() throws InterruptedException {
         bluetoothAdapter.enable();
 
-        waiter.until(
-                BluetoothExpectedConditions.state(BluetoothAdapter.State.STATE_ON)
-        );
+        Thread.sleep(2000);
 
         Assert.assertEquals(
                 bluetoothAdapter.getState(),
@@ -132,9 +116,7 @@ public class AppiumBluetoothTestAdapter {
 
         bluetoothAdapter.setName("TestDevice mama");
 
-        waiter.until(
-                BluetoothExpectedConditions.name("TestDevice mama")
-        );
+        Thread.sleep(2000);
 
         Assert.assertEquals(
                 bluetoothAdapter.getName(),
@@ -143,9 +125,7 @@ public class AppiumBluetoothTestAdapter {
 
         bluetoothAdapter.setName(prevName);
 
-        waiter.until(
-                BluetoothExpectedConditions.name(prevName)
-        );
+        Thread.sleep(2000);
 
         Assert.assertEquals(
                 bluetoothAdapter.getName(),
@@ -154,12 +134,10 @@ public class AppiumBluetoothTestAdapter {
     }
 
     @Test
-    public void discoveryBluetoothDevices() {
+    public void discoveryBluetoothDevices() throws InterruptedException {
         bluetoothAdapter.enable();
 
-        waiter.until(
-                BluetoothExpectedConditions.state(BluetoothAdapter.State.STATE_ON)
-        );
+        Thread.sleep(2000);
 
         Assert.assertEquals(
                 bluetoothAdapter.getState(),
@@ -168,9 +146,7 @@ public class AppiumBluetoothTestAdapter {
 
         bluetoothAdapter.startDiscovery();
 
-        waiter.until(
-                BluetoothExpectedConditions.discovering()
-        );
+        Thread.sleep(2000);
 
         try {
             Thread.sleep(16000);
@@ -181,9 +157,7 @@ public class AppiumBluetoothTestAdapter {
 
         bluetoothAdapter.cancelDiscovery();
 
-        waiter.until(
-                BluetoothExpectedConditions.stopDiscovering()
-        );
+        Thread.sleep(2000);
 
 
         List<BluetoothDevice> devices = bluetoothAdapter.getDiscoveredBluetoothDevices();
@@ -198,12 +172,10 @@ public class AppiumBluetoothTestAdapter {
     }
 
     @Test
-    public void bluetoothProfileTest() {
+    public void bluetoothProfileTest() throws InterruptedException {
         bluetoothAdapter.enable();
 
-        waiter.until(
-                BluetoothExpectedConditions.state(BluetoothAdapter.State.STATE_ON)
-        );
+        Thread.sleep(2000);
 
         Assert.assertEquals(
                 bluetoothAdapter.getState(),

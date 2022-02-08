@@ -6,7 +6,6 @@ import com.github.frunoyman.adapters.usb.InputDevice;
 import com.github.frunoyman.adapters.usb.Usb;
 import com.github.frunoyman.adapters.usb.UsbDevice;
 import com.github.frunoyman.controllers.DDMLibRemoteSdk;
-import com.github.frunoyman.waiter.RemoteWaiter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,7 +16,6 @@ public class UsbTests {
     private static List<IDevice> devices = new ArrayList<>();
     private static Object monitor = new Object();
     private IDevice device;
-    private RemoteWaiter waiter;
     private DDMLibRemoteSdk DDMLibRemoteSDK;
 
     @Before
@@ -50,7 +48,6 @@ public class UsbTests {
 
         device = devices.get(0);
         DDMLibRemoteSDK = new DDMLibRemoteSdk(device);
-        waiter = new RemoteWaiter(DDMLibRemoteSDK, 15);
     }
 
     @Test

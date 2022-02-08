@@ -8,8 +8,6 @@ import com.github.frunoyman.adapters.bluetooth.BluetoothProfile;
 import com.github.frunoyman.adapters.location.Location;
 import com.github.frunoyman.adapters.location.LocationAdapter;
 import com.github.frunoyman.controllers.DDMLibRemoteSdk;
-import com.github.frunoyman.waiter.BluetoothExpectedConditions;
-import com.github.frunoyman.waiter.RemoteWaiter;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +20,6 @@ public class LocationAdapterTest {
     private static Object monitor = new Object();
     private IDevice device;
     private LocationAdapter locationAdapter;
-    private RemoteWaiter waiter;
 
     @Before
     public void beforeTest() throws InterruptedException {
@@ -55,7 +52,6 @@ public class LocationAdapterTest {
         device = devices.get(0);
         DDMLibRemoteSdk DDMLibRemoteSDK = new DDMLibRemoteSdk(device);
         locationAdapter = DDMLibRemoteSDK.getLocationAdapter();
-        waiter = new RemoteWaiter(DDMLibRemoteSDK, 15);
     }
 
 
@@ -63,13 +59,13 @@ public class LocationAdapterTest {
     public void locationEnableDisable() throws InterruptedException {
         locationAdapter.setLocationState(true);
 
-        Thread.sleep(2000);
+        Thread.sleep(3000);
 
         Assert.assertTrue(locationAdapter.isLocationEnabled());
 
         locationAdapter.setLocationState(false);
 
-        Thread.sleep(2000);
+        Thread.sleep(3000);
 
         Assert.assertFalse(locationAdapter.isLocationEnabled());
     }
@@ -78,14 +74,14 @@ public class LocationAdapterTest {
     public void getLocationUpdatesTest() throws InterruptedException {
         locationAdapter.setLocationState(true);
 
-        Thread.sleep(2000);
+        Thread.sleep(3000);
 
         Assert.assertTrue(locationAdapter.isLocationEnabled());
 
 
-        locationAdapter.requestLocationUpdates(LocationAdapter.Provider.GPS_PROVIDER);
+        locationAdapter.requestLocationUpdates(LocationAdapter.Provider.NETWORK_PROVIDER);
 
-        Thread.sleep(120000);
+        Thread.sleep(60000);
 
         List<Location> locations = locationAdapter.getUpdatedLocations();
 
@@ -106,23 +102,28 @@ public class LocationAdapterTest {
 
         Thread.sleep(2000);
 
-        int satellites = locationAdapter.getSatelliteCount();
 
-        Assert.assertTrue(satellites>0);
+        locationAdapter.requestLocationUpdates(LocationAdapter.Provider.NETWORK_PROVIDER);
+
+        Thread.sleep(60000);
+
+//        int satellites = locationAdapter.getSatelliteCount();
+
+//        Assert.assertTrue(satellites > 0);
 
         Location location = locationAdapter.getLastKnownLocation(LocationAdapter.Provider.NETWORK_PROVIDER);
 
-//        Assert.assertTrue(location!=null);
+        Assert.assertTrue(location!=null);
 
         for (LocationAdapter.Provider provider: locationAdapter.getAllProviders()){
             System.out.println("Provider "+provider);
         }
 
-        for (int x=0; x<satellites;x++){
-            boolean inFix = locationAdapter.usedInFix(x);
-            LocationAdapter.ConstellationType type = locationAdapter.getConstellationType(x);
-            System.out.println("Satellite number "+ x+ " in fix "+inFix+" type "+type);
-        }
+//        for (int x=0; x<satellites;x++){
+//            boolean inFix = locationAdapter.usedInFix(x);
+//            LocationAdapter.ConstellationType type = locationAdapter.getConstellationType(x);
+//            System.out.println("Satellite number "+ x+ " in fix "+inFix+" type "+type);
+//        }
 
         locationAdapter.setLocationState(false);
 

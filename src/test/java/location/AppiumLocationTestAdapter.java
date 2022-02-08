@@ -6,8 +6,6 @@ import com.github.frunoyman.adapters.bluetooth.BluetoothProfile;
 import com.github.frunoyman.adapters.location.Location;
 import com.github.frunoyman.adapters.location.LocationAdapter;
 import com.github.frunoyman.controllers.AppiumRemoteSdk;
-import com.github.frunoyman.waiter.BluetoothExpectedConditions;
-import com.github.frunoyman.waiter.RemoteWaiter;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.MobileCapabilityType;
@@ -24,7 +22,6 @@ import java.util.List;
 public class AppiumLocationTestAdapter {
     private AndroidDriver driver;
     private LocationAdapter locationAdapter;
-    private RemoteWaiter waiter;
 
     @Before
     public void beforeAppiumTest() throws MalformedURLException {
@@ -36,7 +33,6 @@ public class AppiumLocationTestAdapter {
         driver = new AndroidDriver(new URL("http://0.0.0.0:4723/wd/hub"), desiredCapabilities);
         AppiumRemoteSdk remoteSdk = new AppiumRemoteSdk(driver);
         locationAdapter = remoteSdk.getLocationAdapter();
-        waiter = new RemoteWaiter(remoteSdk, 15);
     }
 
     @Test

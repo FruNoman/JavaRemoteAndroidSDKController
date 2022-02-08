@@ -5,8 +5,6 @@ import com.github.frunoyman.adapters.bluetooth.BluetoothAdapter;
 import com.github.frunoyman.adapters.bluetooth.BluetoothDevice;
 import com.github.frunoyman.adapters.bluetooth.BluetoothProfile;
 import com.github.frunoyman.controllers.DDMLibRemoteSdk;
-import com.github.frunoyman.waiter.BluetoothExpectedConditions;
-import com.github.frunoyman.waiter.RemoteWaiter;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +17,6 @@ public class BluetoothAdapterTest {
     private static Object monitor = new Object();
     private IDevice device;
     private BluetoothAdapter bluetoothAdapter;
-    private RemoteWaiter waiter;
 
     @Before
     public void beforeTest() throws InterruptedException {
@@ -52,17 +49,14 @@ public class BluetoothAdapterTest {
         device = devices.get(0);
         DDMLibRemoteSdk DDMLibRemoteSDK = new DDMLibRemoteSdk(device);
         bluetoothAdapter = DDMLibRemoteSDK.getBluetoothAdapter();
-        waiter = new RemoteWaiter(DDMLibRemoteSDK, 15);
     }
 
 
     @Test
-    public void bluetoothEnableDisable(){
+    public void bluetoothEnableDisable() throws InterruptedException {
         bluetoothAdapter.enable();
 
-        waiter.until(
-                BluetoothExpectedConditions.state(BluetoothAdapter.State.STATE_ON)
-        );
+        Thread.sleep(2000);
 
 
         Assert.assertEquals(
@@ -76,9 +70,7 @@ public class BluetoothAdapterTest {
 
         bluetoothAdapter.disable();
 
-        waiter.until(
-                BluetoothExpectedConditions.state(BluetoothAdapter.State.STATE_OFF)
-        );
+        Thread.sleep(2000);
 
         Assert.assertEquals(
                 bluetoothAdapter.getState(),
@@ -91,12 +83,10 @@ public class BluetoothAdapterTest {
     }
 
     @Test
-    public void bluetoothDiscoverable() {
+    public void bluetoothDiscoverable() throws InterruptedException {
         bluetoothAdapter.enable();
 
-        waiter.until(
-                BluetoothExpectedConditions.state(BluetoothAdapter.State.STATE_ON)
-        );
+        Thread.sleep(2000);
 
         Assert.assertEquals(
                 bluetoothAdapter.getState(),
@@ -104,9 +94,7 @@ public class BluetoothAdapterTest {
         );
 
         bluetoothAdapter.startDiscoverable(120);
-        waiter.until(
-                BluetoothExpectedConditions.discoverable()
-        );
+        Thread.sleep(2000);
 
         Assert.assertTrue(
                 bluetoothAdapter.isDiscoverable()
@@ -119,9 +107,7 @@ public class BluetoothAdapterTest {
 
         bluetoothAdapter.stopDiscoverable();
 
-        waiter.until(
-                BluetoothExpectedConditions.stopDiscoverable()
-        );
+        Thread.sleep(2000);
 
         Assert.assertFalse(
                 bluetoothAdapter.isDiscoverable()
@@ -135,12 +121,10 @@ public class BluetoothAdapterTest {
     }
 
     @Test
-    public void bluetoothChangeNameTest(){
+    public void bluetoothChangeNameTest() throws InterruptedException {
         bluetoothAdapter.enable();
 
-        waiter.until(
-                BluetoothExpectedConditions.state(BluetoothAdapter.State.STATE_ON)
-        );
+        Thread.sleep(2000);
 
         Assert.assertEquals(
                 bluetoothAdapter.getState(),
@@ -151,9 +135,7 @@ public class BluetoothAdapterTest {
 
         bluetoothAdapter.setName("TestDevice mama");
 
-        waiter.until(
-                BluetoothExpectedConditions.name("TestDevice mama")
-        );
+        Thread.sleep(2000);
 
         Assert.assertEquals(
                 bluetoothAdapter.getName(),
@@ -162,9 +144,7 @@ public class BluetoothAdapterTest {
 
         bluetoothAdapter.setName(prevName);
 
-        waiter.until(
-                BluetoothExpectedConditions.name(prevName)
-        );
+        Thread.sleep(2000);
 
         Assert.assertEquals(
                 bluetoothAdapter.getName(),
@@ -173,12 +153,10 @@ public class BluetoothAdapterTest {
     }
 
     @Test
-    public void discoveryBluetoothDevices(){
-        bluetoothAdapter.disable();
+    public void discoveryBluetoothDevices() throws InterruptedException {
+        bluetoothAdapter.enable();
 
-        waiter.until(
-                BluetoothExpectedConditions.state(BluetoothAdapter.State.STATE_ON)
-        );
+        Thread.sleep(2000);
 
         Assert.assertEquals(
                 bluetoothAdapter.getState(),
@@ -187,9 +165,7 @@ public class BluetoothAdapterTest {
 
         bluetoothAdapter.startDiscovery();
 
-        waiter.until(
-                BluetoothExpectedConditions.discovering()
-        );
+        Thread.sleep(2000);
 
         try {
             Thread.sleep(16000);
@@ -200,9 +176,7 @@ public class BluetoothAdapterTest {
 
         bluetoothAdapter.cancelDiscovery();
 
-        waiter.until(
-                BluetoothExpectedConditions.stopDiscovering()
-        );
+        Thread.sleep(2000);
 
 
         List<BluetoothDevice> devices = bluetoothAdapter.getDiscoveredBluetoothDevices();
@@ -217,12 +191,10 @@ public class BluetoothAdapterTest {
     }
 
     @Test
-    public void bluetoothProfileTest(){
+    public void bluetoothProfileTest() throws InterruptedException {
         bluetoothAdapter.enable();
 
-        waiter.until(
-                BluetoothExpectedConditions.state(BluetoothAdapter.State.STATE_ON)
-        );
+        Thread.sleep(2000);
 
         Assert.assertEquals(
                 bluetoothAdapter.getState(),

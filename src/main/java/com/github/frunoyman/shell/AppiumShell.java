@@ -42,18 +42,24 @@ public class AppiumShell extends Shell {
     }
 
     @Override
-    public String executeBroadcast(String... command){
-        if (!execute("pm list packages -3").contains(REMOTE_PACKAGE)){
+    public String executeBroadcastExtended(String broadcast, String command, Object... params) {
+        StringBuilder commandBuilder = new StringBuilder();
+        commandBuilder.append(broadcast);
+        commandBuilder.append(" --es command " + command);
+        for (int x = 0; x < params.length; x++) {
+            commandBuilder.append(" --es param" + x + " '" + params[x] + "'");
+        }
+        if (!execute("pm list packages -3").contains(REMOTE_PACKAGE)) {
             logger.debug("Remote controller apk was not found, installing ...");
             File apk = getApk();
             AndroidInstallApplicationOptions options = new AndroidInstallApplicationOptions();
             options.withGrantPermissionsEnabled();
-            driver.installApp(apk.getAbsolutePath(),options);
+            driver.installApp(apk.getAbsolutePath(), options);
             if (!execute("pm list packages -3").contains(REMOTE_PACKAGE)) {
                 throw new RuntimeException("Pls install RemoteController apk manually");
             }
         }
-        if(!execute("ps -A").contains(REMOTE_PACKAGE)){
+        if (!execute("ps -A").contains(REMOTE_PACKAGE)) {
             logger.debug("Remote controller was not running, starting ...");
             execute("am", "start", "-n", REMOTE_PACKAGE + "/.MainActivity");
             try {
@@ -63,30 +69,26 @@ public class AppiumShell extends Shell {
             }
             driver.pressKey(new KeyEvent(AndroidKey.HOME));
         }
-        StringBuilder commandBuilder = new StringBuilder();
-        for (String var : command) {
-            commandBuilder.append(var);
-            commandBuilder.append(" ");
-        }
-        Map<String, Object> args = new HashMap<>();
-        args.put("command", commandBuilder.toString());
-        String output = driver.executeScript("mobile: shell", args).toString();
+        String output = execute(commandBuilder.toString());
         Pattern r = Pattern.compile(ADAPTER_PATTERN);
         Matcher m = r.matcher(output);
         if (m.matches()) {
             if (output.contains("result=" + ERROR_CODE)) {
-                throw new RuntimeException("Broadcast error");
-            } else {
-                return m.group(3);
+                throw new RuntimeException(m.group(1));
+            } else if (output.contains("result=" + SUCCESS_CODE)) {
+                return m.group(1);
+
             }
-        }else if (output.contains("result="+EMPTY_BROADCAST_CODE)){
+        } else if (output.contains("result=" + EMPTY_BROADCAST_CODE)) {
             throw new RuntimeException("Empty broadcast error");
+        } else if (!output.contains("data=\"") && output.contains("result=" + SUCCESS_CODE)) {
+            return "";
         }
         return output;
     }
 
     @Override
     public String getSerial() {
-        return (String) execute("getprop","ro.boot.serialno").trim();
+        return (String) execute("getprop", "ro.boot.serialno").trim();
     }
 }

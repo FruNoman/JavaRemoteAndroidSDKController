@@ -8,7 +8,7 @@ import com.github.frunoyman.adapters.location.LocationAdapter;
 import com.github.frunoyman.adapters.player.PlayerAdapter;
 import com.github.frunoyman.adapters.telephony.TelecomAdapter;
 import com.github.frunoyman.adapters.usb.Usb;
-import com.github.frunoyman.adapters.wifi.Wifi;
+import com.github.frunoyman.adapters.wifi.WifiAdapter;
 import com.github.frunoyman.shell.DDMLibShell;
 import com.github.frunoyman.shell.Shell;
 
@@ -26,8 +26,8 @@ public class DDMLibRemoteSdk extends BaseSdk {
     }
 
     @Override
-    public Wifi getWifiAdapter() {
-        return new Wifi(shell);
+    public WifiAdapter getWifiAdapter() {
+        return new WifiAdapter(shell);
     }
 
     @Override

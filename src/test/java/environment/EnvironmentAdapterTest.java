@@ -6,7 +6,6 @@ import com.github.frunoyman.adapters.environment.EnvironmentAdapter;
 import com.github.frunoyman.adapters.environment.RemoteFile;
 import com.github.frunoyman.adapters.environment.StorageVolume;
 import com.github.frunoyman.controllers.DDMLibRemoteSdk;
-import com.github.frunoyman.waiter.RemoteWaiter;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +17,6 @@ public class EnvironmentAdapterTest {
     private static List<IDevice> devices = new ArrayList<>();
     private static Object monitor = new Object();
     private IDevice device;
-    private RemoteWaiter waiter;
     private DDMLibRemoteSdk DDMLibRemoteSDK;
 
     @Before
@@ -51,12 +49,11 @@ public class EnvironmentAdapterTest {
 
         device = devices.get(0);
         DDMLibRemoteSDK = new DDMLibRemoteSdk(device);
-        waiter = new RemoteWaiter(DDMLibRemoteSDK, 15);
     }
 
     @Test
-    public void remoteFileExistTetst(){
-        RemoteFile remoteFile = DDMLibRemoteSDK.getRemoteFile("/storage/emulated/0/Papa mama.txt");
+    public void remoteFileExistTest(){
+        RemoteFile remoteFile = DDMLibRemoteSDK.getRemoteFile("/storage/emulated/0/");
         for (RemoteFile file:remoteFile.listFiles()){
             file.isFile();
             file.isDirectory();

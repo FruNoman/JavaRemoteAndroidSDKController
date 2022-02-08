@@ -7,8 +7,6 @@ import com.github.frunoyman.adapters.bluetooth.BluetoothDevice;
 import com.github.frunoyman.adapters.bluetooth.BluetoothProfile;
 import com.github.frunoyman.adapters.player.PlayerAdapter;
 import com.github.frunoyman.controllers.DDMLibRemoteSdk;
-import com.github.frunoyman.waiter.BluetoothExpectedConditions;
-import com.github.frunoyman.waiter.RemoteWaiter;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +19,6 @@ public class PlayerAdapterTest {
     private static Object monitor = new Object();
     private IDevice device;
     private PlayerAdapter playerAdapter;
-    private RemoteWaiter waiter;
 
     @Before
     public void beforeTest() throws InterruptedException {
@@ -54,7 +51,6 @@ public class PlayerAdapterTest {
         device = devices.get(0);
         DDMLibRemoteSdk DDMLibRemoteSDK = new DDMLibRemoteSdk(device);
         playerAdapter = DDMLibRemoteSDK.getPlayerAdapter();
-        waiter = new RemoteWaiter(DDMLibRemoteSDK, 15);
     }
 
 

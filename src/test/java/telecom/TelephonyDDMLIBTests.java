@@ -6,7 +6,6 @@ import com.github.frunoyman.adapters.telephony.CallHistory;
 import com.github.frunoyman.adapters.telephony.Contact;
 import com.github.frunoyman.adapters.telephony.TelecomAdapter;
 import com.github.frunoyman.controllers.DDMLibRemoteSdk;
-import com.github.frunoyman.waiter.RemoteWaiter;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +17,6 @@ public class TelephonyDDMLIBTests {
     private static List<IDevice> devices = new ArrayList<>();
     private static Object monitor = new Object();
     private IDevice device;
-    private RemoteWaiter waiter;
     private TelecomAdapter telecomAdapter;
 
     @Before
@@ -51,20 +49,19 @@ public class TelephonyDDMLIBTests {
 
         device = devices.get(0);
         DDMLibRemoteSdk DDMLibRemoteSDK = new DDMLibRemoteSdk(device);
-        waiter = new RemoteWaiter(DDMLibRemoteSDK, 15);
         telecomAdapter = DDMLibRemoteSDK.getTelecomAdapter();
     }
 
     @Test
     public void telephonyCallHistoryTests() throws Exception {
-        for (CallHistory callHistory : telecomAdapter.getCallHistory()){
+        for (CallHistory callHistory : telecomAdapter.getCallHistory()) {
             System.out.println(callHistory);
         }
     }
 
     @Test
     public void telephonyContactsTests() throws Exception {
-        for (Contact contact : telecomAdapter.getContacts()){
+        for (Contact contact : telecomAdapter.getContacts()) {
             System.out.println(contact);
         }
     }
@@ -77,24 +74,30 @@ public class TelephonyDDMLIBTests {
     @Test
     public void sendUssdTest() throws Exception {
 //        telecomAdapter.sendSMS("+380672244346","test test");
-        while (!telecomAdapter.isSMSReceived()){
-            Thread.sleep(1000);
-        }
-        System.out.println(telecomAdapter.getLastSMSNumber());
-        System.out.println(telecomAdapter.getLastSMSText());
+//        while (!telecomAdapter.isSMSReceived()){
+//            Thread.sleep(1000);
+//        }
+//        System.out.println(telecomAdapter.getLastSMSNumber());
+//        System.out.println(telecomAdapter.getLastSMSText());
 
-//        String result = telecomAdapter.sendUssdRequest("*161#");
-//        System.out.println(result);
-//        telecomAdapter.getNetworkOperatorName();
-//        telecomAdapter.getDataState();
-//        telecomAdapter.getDataNetworkType();
-//        telecomAdapter.getPhoneType();
-//        telecomAdapter.getSimState();
-//        telecomAdapter.getCallState();
-//        telecomAdapter.call("466");
-//        Thread.sleep(2000);
-//        telecomAdapter.getCallState();
-//        Thread.sleep(3000);
-//        telecomAdapter.endCall();
+        String result = telecomAdapter.sendUssdRequest("*161#");
+        System.out.println(result);
+        telecomAdapter.getNetworkOperatorName();
+        telecomAdapter.getDataState();
+        telecomAdapter.getDataNetworkType();
+        telecomAdapter.getPhoneType();
+        telecomAdapter.getSimState();
+        Assert.assertTrue(telecomAdapter.getCallState() == TelecomAdapter.CallState.NONE);
+        telecomAdapter.call("466");
+        Thread.sleep(10000);
+        Assert.assertTrue(telecomAdapter.getCallState() == TelecomAdapter.CallState.IN_CALL);
+        Thread.sleep(3000);
+        telecomAdapter.endCall();
+        Thread.sleep(3000);
+        Assert.assertTrue(telecomAdapter.getCallState() == TelecomAdapter.CallState.NONE);
+
+        Assert.assertTrue(telecomAdapter.getContactsSize()>0);
+        Assert.assertTrue(telecomAdapter.getCallHistorySize()>0);
+
     }
 }

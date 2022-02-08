@@ -7,14 +7,14 @@ import com.github.frunoyman.adapters.location.LocationAdapter;
 import com.github.frunoyman.adapters.player.PlayerAdapter;
 import com.github.frunoyman.adapters.telephony.TelecomAdapter;
 import com.github.frunoyman.adapters.usb.Usb;
-import com.github.frunoyman.adapters.wifi.Wifi;
+import com.github.frunoyman.adapters.wifi.WifiAdapter;
 import com.github.frunoyman.shell.Shell;
 
 public abstract class BaseSdk {
 
     public abstract BluetoothAdapter getBluetoothAdapter();
 
-    public abstract Wifi getWifiAdapter();
+    public abstract WifiAdapter getWifiAdapter();
 
     public abstract TelecomAdapter getTelecomAdapter();
 

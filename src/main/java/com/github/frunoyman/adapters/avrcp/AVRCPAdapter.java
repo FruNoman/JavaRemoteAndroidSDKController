@@ -6,23 +6,20 @@ import org.apache.log4j.Logger;
 
 
 public class AVRCPAdapter extends BaseAdapter {
-    private final String MEDIA_SESSION_COMMAND = "media_session_command ";
     private final String MEDIA_SESSION_REMOTE = "com.github.remotesdk.MEDIA_SESSION_REMOTE";
     private Logger logger;
 
 
-    private final String AM_COMMAND = BROADCAST
-            + MEDIA_SESSION_REMOTE
-            + ES
-            + MEDIA_SESSION_COMMAND;
+    private final String MEDIA_SESSION_BROADCAST = BROADCAST + MEDIA_SESSION_REMOTE;
 
-    private final String TRANSPORT_CONTROL_PLAY = AM_COMMAND + "transportControlPlay";
-    private final String TRANSPORT_CONTROL_PAUSE = AM_COMMAND + "transportControlPause";
-    private final String TRANSPORT_CONTROL_NEXT = AM_COMMAND + "transportControlNext";
-    private final String TRANSPORT_CONTROL_PREV = AM_COMMAND + "transportControlPrev";
-    private final String GET_PLAYBACK_STATE_CURRENT_POSITION = AM_COMMAND + "getPlaybackStateCurrentPosition";
-    private final String GET_META_DATA = AM_COMMAND + "getMetaData,";
-    private final String TRANSPORT_CONTROL_IS_PLAYING = AM_COMMAND + "transportControlIsPlaying";
+
+    private final String TRANSPORT_CONTROL_PLAY = "transportControlPlay";
+    private final String TRANSPORT_CONTROL_PAUSE = "transportControlPause";
+    private final String TRANSPORT_CONTROL_NEXT = "transportControlNext";
+    private final String TRANSPORT_CONTROL_PREV = "transportControlPrev";
+    private final String GET_PLAYBACK_STATE_CURRENT_POSITION = "getPlaybackStateCurrentPosition";
+    private final String GET_META_DATA = "getMetaData";
+    private final String TRANSPORT_CONTROL_IS_PLAYING = "transportControlIsPlaying";
 
     public enum MediaMetaData {
         METADATA_KEY_TITLE("android.media.metadata.TITLE"),
@@ -84,33 +81,33 @@ public class AVRCPAdapter extends BaseAdapter {
 
 
     public void play() {
-        shell.executeBroadcast(TRANSPORT_CONTROL_PLAY);
+        shell.executeBroadcastExtended(MEDIA_SESSION_BROADCAST, TRANSPORT_CONTROL_PLAY);
         logger.debug("play");
     }
 
     public void pause() {
-        shell.executeBroadcast(TRANSPORT_CONTROL_PAUSE);
+        shell.executeBroadcastExtended(MEDIA_SESSION_BROADCAST, TRANSPORT_CONTROL_PAUSE);
         logger.debug("pause");
     }
 
     public void next() {
-        shell.executeBroadcast(TRANSPORT_CONTROL_NEXT);
+        shell.executeBroadcastExtended(MEDIA_SESSION_BROADCAST, TRANSPORT_CONTROL_NEXT);
         logger.debug("next");
     }
 
     public void prev() {
-        shell.executeBroadcast(TRANSPORT_CONTROL_PREV);
+        shell.executeBroadcastExtended(MEDIA_SESSION_BROADCAST, TRANSPORT_CONTROL_PREV);
         logger.debug("next");
     }
 
     public int getCurrentPosition() {
-        int result = Integer.parseInt(shell.executeBroadcast(GET_PLAYBACK_STATE_CURRENT_POSITION));
+        int result = Integer.parseInt(shell.executeBroadcastExtended(MEDIA_SESSION_BROADCAST, GET_PLAYBACK_STATE_CURRENT_POSITION));
         logger.debug("get current position return [" + result + "]");
         return result;
     }
 
     public boolean isPlaying() {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(TRANSPORT_CONTROL_IS_PLAYING));
+        boolean result = Boolean.parseBoolean(shell.executeBroadcastExtended(MEDIA_SESSION_BROADCAST, TRANSPORT_CONTROL_IS_PLAYING));
         logger.debug("is playing return [" + result + "]");
         return result;
     }
@@ -120,12 +117,12 @@ public class AVRCPAdapter extends BaseAdapter {
         if (mediaMetaData == MediaMetaData.METADATA_KEY_DURATION) {
             type = "long";
         }
-        String result = shell.executeBroadcast(GET_META_DATA + type + "," + mediaMetaData.getMetadata());
+        String result = shell.executeBroadcastExtended(MEDIA_SESSION_BROADCAST, GET_META_DATA, type, mediaMetaData.getMetadata());
         logger.debug("is playing return [" + result + "]");
         return result;
     }
 
-    public int getDuration(){
+    public int getDuration() {
         return Integer.parseInt(getCurrentPlayMetaData(MediaMetaData.METADATA_KEY_DURATION));
     }
 

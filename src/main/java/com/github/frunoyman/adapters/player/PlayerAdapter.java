@@ -6,33 +6,29 @@ import com.github.frunoyman.shell.Shell;
 import org.apache.log4j.Logger;
 
 public class PlayerAdapter extends BaseAdapter {
-    private final String PLAYER_COMMAND = "player_command ";
     private final String PLAYER_REMOTE = "com.github.remotesdk.PLAYER_REMOTE";
     private Logger logger;
 
 
-    private final String AM_COMMAND = BROADCAST
-            + PLAYER_REMOTE
-            + ES
-            + PLAYER_COMMAND;
+    private final String PLAYER_BROADCAST = BROADCAST + PLAYER_REMOTE;
 
-    private final String PLAY_SONG = AM_COMMAND + "playSong,";
-    private final String STOP_SONG = AM_COMMAND + "stopSong";
-    private final String SEEK_TO = AM_COMMAND + "seekToSong,";
-    private final String GET_DURATION = AM_COMMAND + "getSongDuration";
-    private final String GET_CURRENT_POSITION = AM_COMMAND + "getSongCurrentPosition";
-    private final String IS_SONG_PLAYING = AM_COMMAND + "isSongPlaying";
-    private final String IS_SONG_LOOPING = AM_COMMAND + "isSongLooping";
-    private final String SET_LOOPING = AM_COMMAND + "setSongLooping,";
-    private final String DISPLAY_VIDEO = AM_COMMAND + "displayPlayerView,";
-    private final String PLAY_FOLDER = AM_COMMAND + "playFolder,";
-    private final String NEXT_SONG = AM_COMMAND + "nextSong";
-    private final String PREV_SONG = AM_COMMAND + "prevSong";
-    private final String PAUSE_SONG = AM_COMMAND + "pauseSong";
-    private final String REV_SONG = AM_COMMAND + "revSong";
 
-    private final String GET_CURRENT_PLAYING_FILE = AM_COMMAND + "getCurrentPlayingFile";
-    private final String GET_MEDIA_METADATA = AM_COMMAND + "getMediaMetadata,";
+    private final String PLAY_SONG = "playSong";
+    private final String STOP_SONG = "stopSong";
+    private final String SEEK_TO = "seekToSong";
+    private final String GET_DURATION = "getSongDuration";
+    private final String GET_CURRENT_POSITION = "getSongCurrentPosition";
+    private final String IS_SONG_PLAYING = "isSongPlaying";
+    private final String IS_SONG_LOOPING = "isSongLooping";
+    private final String SET_LOOPING = "setSongLooping";
+    private final String DISPLAY_VIDEO = "displayPlayerView";
+    private final String PLAY_FOLDER = "playFolder";
+    private final String NEXT_SONG = "nextSong";
+    private final String PREV_SONG = "prevSong";
+    private final String PAUSE_SONG = "pauseSong";
+    private final String REV_SONG = "revSong";
+    private final String GET_CURRENT_PLAYING_FILE = "getCurrentPlayingFile";
+    private final String GET_MEDIA_METADATA = "getMediaMetadata";
 
     public PlayerAdapter(Shell shell) {
         super(shell);
@@ -118,7 +114,7 @@ public class PlayerAdapter extends BaseAdapter {
     }
 
     public void play(String path) {
-        shell.executeBroadcast(PLAY_SONG + path);
+        shell.executeBroadcastExtended(PLAYER_BROADCAST, PLAY_SONG, path);
         logger.debug("play [" + path + "]");
     }
 
@@ -127,41 +123,41 @@ public class PlayerAdapter extends BaseAdapter {
     }
 
     public void stop() {
-        shell.executeBroadcast(STOP_SONG);
+        shell.executeBroadcastExtended(PLAYER_BROADCAST, STOP_SONG);
         logger.debug("stop song");
     }
 
     public void seekTo(long seekTo) {
-        shell.executeBroadcast(SEEK_TO + seekTo);
+        shell.executeBroadcastExtended(PLAYER_BROADCAST, SEEK_TO, seekTo);
         logger.debug("seek to [" + seekTo + "]");
     }
 
     public long getDuration() {
-        long result = Long.parseLong(shell.executeBroadcast(GET_DURATION));
+        long result = Long.parseLong(shell.executeBroadcastExtended(PLAYER_BROADCAST, GET_DURATION));
         logger.debug("get duration return [" + result + "]");
         return result;
     }
 
     public long getCurrentPosition() {
-        long result = Long.parseLong(shell.executeBroadcast(GET_CURRENT_POSITION));
+        long result = Long.parseLong(shell.executeBroadcastExtended(PLAYER_BROADCAST, GET_CURRENT_POSITION));
         logger.debug("get current position return [" + result + "]");
         return result;
     }
 
     public boolean isPlaying() {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(IS_SONG_PLAYING));
+        boolean result = Boolean.parseBoolean(shell.executeBroadcastExtended(PLAYER_BROADCAST, IS_SONG_PLAYING));
         logger.debug("is playing return [" + result + "]");
         return result;
     }
 
     public boolean isLooping() {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(IS_SONG_LOOPING));
+        boolean result = Boolean.parseBoolean(shell.executeBroadcastExtended(PLAYER_BROADCAST, IS_SONG_LOOPING));
         logger.debug("is looping  return [" + result + "]");
         return result;
     }
 
     public void setLooping(boolean state) {
-        shell.executeBroadcast(SET_LOOPING + state);
+        shell.executeBroadcastExtended(PLAYER_BROADCAST, SET_LOOPING, state);
         logger.debug("set looping [" + state + "]");
     }
 
@@ -173,12 +169,12 @@ public class PlayerAdapter extends BaseAdapter {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        shell.executeBroadcast(DISPLAY_VIDEO + playerView.getView());
+        shell.executeBroadcastExtended(PLAYER_BROADCAST, DISPLAY_VIDEO, playerView.getView());
         logger.debug("display view [" + playerView.getView() + "]");
     }
 
     public void playFolder(String path) {
-        shell.executeBroadcast(PLAY_FOLDER + path);
+        shell.executeBroadcastExtended(PLAYER_BROADCAST, PLAY_FOLDER, path);
         logger.debug("play folder [" + path + "]");
     }
 
@@ -187,34 +183,34 @@ public class PlayerAdapter extends BaseAdapter {
     }
 
     public void next() {
-        shell.executeBroadcast(NEXT_SONG);
+        shell.executeBroadcastExtended(PLAYER_BROADCAST, NEXT_SONG);
         logger.debug("play next");
     }
 
     public void previous() {
-        shell.executeBroadcast(PREV_SONG);
+        shell.executeBroadcastExtended(PLAYER_BROADCAST, PREV_SONG);
         logger.debug("play previous");
     }
 
     public void rev() {
-        shell.executeBroadcast(REV_SONG);
+        shell.executeBroadcastExtended(PLAYER_BROADCAST, REV_SONG);
         logger.debug("rev play");
     }
 
     public void pause() {
-        shell.executeBroadcast(PAUSE_SONG);
+        shell.executeBroadcastExtended(PLAYER_BROADCAST, PAUSE_SONG);
         logger.debug("pause");
     }
 
     public RemoteFile getCurrentPlayingFile() {
-        String result = shell.executeBroadcast(GET_CURRENT_PLAYING_FILE);
+        String result = shell.executeBroadcastExtended(PLAYER_BROADCAST, GET_CURRENT_PLAYING_FILE);
         logger.debug("get current playing file [" + result + "]");
         return new RemoteFile(shell, result);
     }
 
     public String getCurrentPlayMediaMetaData(MetaData metaData) {
         String file = getCurrentPlayingFile().getAbsolutePath();
-        String result = shell.executeBroadcast(GET_MEDIA_METADATA + file + "," + metaData.getMetaData());
+        String result = shell.executeBroadcastExtended(PLAYER_BROADCAST, GET_MEDIA_METADATA, file, metaData.getMetaData());
         logger.debug("get current play media metadata  [" + metaData.name() + "] return [" + result + "]");
         return result;
     }

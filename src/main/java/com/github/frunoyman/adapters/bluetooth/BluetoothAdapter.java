@@ -10,47 +10,44 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class BluetoothAdapter extends BaseAdapter {
-    private final String BLUETOOTH_COMMAND = "bluetooth_command ";
     private final String BLUETOOTH_REMOTE = "com.github.remotesdk.BLUETOOTH_REMOTE";
     private final String BLUETOOTH_ADDRESS_PATTERN = "[\\s\\S]*address:[\\s\\S](.*)[\\s\\S]*";
     private Logger logger;
 
 
-    private final String AM_COMMAND = BROADCAST
-            + BLUETOOTH_REMOTE
-            + ES
-            + BLUETOOTH_COMMAND;
+    private final String BLUETOOTH_BROADCAST = BROADCAST + BLUETOOTH_REMOTE;
 
+    private final String ERROR_TEST = "ERROR_TEST";
     private final String GET_ADDRESS = "dumpsys bluetooth_manager";
-    private final String ENABLE = AM_COMMAND + "enable";
-    private final String DISABLE = AM_COMMAND + "disable";
-    private final String GET_STATE = AM_COMMAND + "getState";
-    private final String DISCOVERABLE = AM_COMMAND + "discoverable,";
-    private final String SET_NAME = AM_COMMAND + "setName,";
-    private final String GET_NAME = AM_COMMAND + "getName";
-    private final String START_DISCOVERY = AM_COMMAND + "startDiscovery";
-    private final String CANCEL_DISCOVERY = AM_COMMAND + "cancelDiscovery";
-    private final String PAIR = AM_COMMAND + "pairDevice,";
-    private final String GET_DISCOVERED_DEVICES = AM_COMMAND + "getDiscoveredDevices";
-    private final String SET_PAIRING_CONFIRMATION = AM_COMMAND + "setPairingConfirmation,";
-    private final String GET_SCAN_MODE = AM_COMMAND + "getScanMode";
-    private final String GET_BONDED_DEVICES = AM_COMMAND + "getBondedDevices";
-    private final String GET_REMOTE_DEVICE = AM_COMMAND + "getRemoteDevice,";
-    private final String IS_ENABLED = AM_COMMAND + "isEnabled";
-    private final String FACTORY_RESET = AM_COMMAND + "factoryReset";
-    private final String GET_BLUETOOTH_CLASS = AM_COMMAND + "getBluetoothClass";
-    private final String SET_SCAN_MODE = AM_COMMAND + "setScanMode,";
-    private final String GET_DISCOVERABLE_TIMEOUT = AM_COMMAND + "getDiscoverableTimeout";
-    private final String SET_DISCOVERABLE_TIMEOUT = AM_COMMAND + "setDiscoverableTimeout,";
-    private final String IS_DISCOVERING = AM_COMMAND + "isDiscovering";
-    private final String GET_CONNECTION_STATE = AM_COMMAND + "getConnectionState";
-    private final String GET_PROFILE_CONNECTION_STATE = AM_COMMAND + "getProfileConnectionState,";
-    private final String REMOVE_PAIRED_DEVICE = AM_COMMAND + "removeBond,";
-    private final String GET_PAIR_STATE = AM_COMMAND + "getPairState";
-    private final String GET_DEVICE_NAME = AM_COMMAND + "getDeviceName,";
-    private final String GET_DEVICE_TYPE = AM_COMMAND + "getDeviceType,";
-    private final String GET_CONNECTED_PROFILES = AM_COMMAND + "getConnectedProfiles";
-    private final String DEVICE_CANCEL_PAIRING = AM_COMMAND + "deviceCancelPairing,";
+    private final String ENABLE = "enable";
+    private final String DISABLE = "disable";
+    private final String GET_STATE = "getState";
+    private final String DISCOVERABLE = "discoverable";
+    private final String SET_NAME = "setName";
+    private final String GET_NAME = "getName";
+    private final String START_DISCOVERY = "startDiscovery";
+    private final String CANCEL_DISCOVERY = "cancelDiscovery";
+    private final String PAIR = "pairDevice";
+    private final String GET_DISCOVERED_DEVICES = "getDiscoveredDevices";
+    private final String SET_PAIRING_CONFIRMATION = "setPairingConfirmation";
+    private final String GET_SCAN_MODE = "getScanMode";
+    private final String GET_BONDED_DEVICES = "getBondedDevices";
+    private final String GET_REMOTE_DEVICE = "getRemoteDevice";
+    private final String IS_ENABLED = "isEnabled";
+    private final String FACTORY_RESET = "factoryReset";
+    private final String GET_BLUETOOTH_CLASS = "getBluetoothClass";
+    private final String SET_SCAN_MODE = "setScanMode";
+    private final String GET_DISCOVERABLE_TIMEOUT = "getDiscoverableTimeout";
+    private final String SET_DISCOVERABLE_TIMEOUT = "setDiscoverableTimeout";
+    private final String IS_DISCOVERING = "isDiscovering";
+    private final String GET_CONNECTION_STATE = "getConnectionState";
+    private final String GET_PROFILE_CONNECTION_STATE = "getProfileConnectionState";
+    private final String REMOVE_PAIRED_DEVICE = "removeBond";
+    private final String GET_PAIR_STATE = "getPairState";
+    private final String GET_DEVICE_NAME = "getDeviceName";
+    private final String GET_DEVICE_TYPE = "getDeviceType";
+    private final String GET_CONNECTED_PROFILES = "getConnectedProfiles";
+    private final String DEVICE_CANCEL_PAIRING = "deviceCancelPairing";
 
 //    private final String GET_DEVICE_CLASS = AM_COMMAND + "getDeviceClass,";
 //    private final String SET_DEVICE_PAIRING_CONFIRM = AM_COMMAND + "setDevicePairingConfirmation,";
@@ -148,19 +145,24 @@ public class BluetoothAdapter extends BaseAdapter {
         }
     }
 
+    public void error_test() {
+        shell.executeBroadcastExtended(BLUETOOTH_BROADCAST, ERROR_TEST);
+        logger.debug("error test");
+    }
+
     public void enable() {
-        shell.executeBroadcast(ENABLE);
+        shell.executeBroadcastExtended(BLUETOOTH_BROADCAST, ENABLE);
         logger.debug("enable");
     }
 
     public void disable() {
-        shell.executeBroadcast(DISABLE);
+        shell.executeBroadcastExtended(BLUETOOTH_BROADCAST, DISABLE);
         logger.debug("disable");
     }
 
     public State getState() {
-        State state = State.getState(Integer.parseInt(shell.executeBroadcast(GET_STATE)));
-        logger.debug("get state [" + state + "]");
+        State state = State.getState(Integer.parseInt(shell.executeBroadcastExtended(BLUETOOTH_BROADCAST, GET_STATE)));
+        logger.debug("get state return [" + state + "]");
         return state;
     }
 
@@ -172,12 +174,12 @@ public class BluetoothAdapter extends BaseAdapter {
         if (m.matches()) {
             address = m.group(1);
         }
-        logger.debug("get address [" + address + "]");
+        logger.debug("get address return [" + address + "]");
         return address;
     }
 
     public void startDiscoverable(int seconds) {
-        shell.executeBroadcast(DISCOVERABLE + seconds);
+        shell.executeBroadcastExtended(BLUETOOTH_BROADCAST, DISCOVERABLE, seconds);
         logger.debug("start discoverable seconds [" + seconds + "]");
     }
 
@@ -191,33 +193,33 @@ public class BluetoothAdapter extends BaseAdapter {
     }
 
     public String getName() {
-        String name = shell.executeBroadcast(GET_NAME);
-        logger.debug("get name [" + name + "]");
-        return name;
+        String result = shell.executeBroadcastExtended(BLUETOOTH_BROADCAST, GET_NAME);
+        logger.debug("get name return [" + result + "]");
+        return result;
     }
 
     public boolean setName(String name) {
-        boolean success = Boolean.parseBoolean(shell.executeBroadcast(SET_NAME + "'" + name + "'"));
-        logger.debug("set name [" + name + "]");
-        return success;
+        boolean result = Boolean.parseBoolean(shell.executeBroadcastExtended(BLUETOOTH_BROADCAST, SET_NAME, name));
+        logger.debug("set name [" + name + "] return [" + result + "]");
+        return result;
     }
 
     public boolean startDiscovery() {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(START_DISCOVERY));
-        logger.debug("start discovery [" + result + "]");
+        boolean result = Boolean.parseBoolean(shell.executeBroadcastExtended(BLUETOOTH_BROADCAST, START_DISCOVERY));
+        logger.debug("start discovery return [" + result + "]");
         return result;
     }
 
 
     public boolean cancelDiscovery() {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(CANCEL_DISCOVERY));
-        logger.debug("cancel discovery [" + result + "]");
+        boolean result = Boolean.parseBoolean(shell.executeBroadcastExtended(BLUETOOTH_BROADCAST, CANCEL_DISCOVERY));
+        logger.debug("cancel discovery return [" + result + "]");
         return result;
     }
 
     public boolean pair(String address) {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(PAIR + address));
-        logger.debug("pair device [" + address + "]");
+        boolean result = Boolean.parseBoolean(shell.executeBroadcastExtended(BLUETOOTH_BROADCAST, PAIR, address));
+        logger.debug("pair device [" + address + "] return [" + result + "]");
         return result;
     }
 
@@ -228,7 +230,7 @@ public class BluetoothAdapter extends BaseAdapter {
 
     public List<BluetoothDevice> getDiscoveredBluetoothDevices() {
         List<BluetoothDevice> devices = new ArrayList<>();
-        String result = shell.executeBroadcast(
+        String result = shell.executeBroadcastExtended(BLUETOOTH_BROADCAST,
                 GET_DISCOVERED_DEVICES
         );
         if (!result.isEmpty()) {
@@ -241,15 +243,15 @@ public class BluetoothAdapter extends BaseAdapter {
     }
 
     public ScanMode getScanMode() {
-        ScanMode scanMode = ScanMode.getScanMode(Integer.parseInt(shell.executeBroadcast(GET_SCAN_MODE)));
-        logger.debug("get scan mode [" + scanMode + "]");
+        ScanMode scanMode = ScanMode.getScanMode(Integer.parseInt(shell.executeBroadcastExtended(BLUETOOTH_BROADCAST, GET_SCAN_MODE)));
+        logger.debug("get scan mode return [" + scanMode + "]");
         return scanMode;
     }
 
 
     public List<BluetoothDevice> getPairedDevices() {
         List<BluetoothDevice> devices = new ArrayList<>();
-        String result = shell.executeBroadcast(
+        String result = shell.executeBroadcastExtended(BLUETOOTH_BROADCAST,
                 GET_BONDED_DEVICES
         );
         if (!result.isEmpty()) {
@@ -262,75 +264,75 @@ public class BluetoothAdapter extends BaseAdapter {
     }
 
     public BluetoothDevice getRemoteDevice(String address) {
-        BluetoothDevice device = new BluetoothDevice(shell, shell.executeBroadcast(GET_REMOTE_DEVICE + address));
+        BluetoothDevice device = new BluetoothDevice(shell, shell.executeBroadcastExtended(BLUETOOTH_BROADCAST, GET_REMOTE_DEVICE, address));
         logger.debug("get device [" + address + "]");
         return device;
     }
 
     public boolean isEnabled() {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(IS_ENABLED));
-        logger.debug("is enabled [" + result + "]");
+        boolean result = Boolean.parseBoolean(shell.executeBroadcastExtended(BLUETOOTH_BROADCAST, IS_ENABLED));
+        logger.debug("is enabled return [" + result + "]");
         return result;
     }
 
     public boolean factoryReset() {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(FACTORY_RESET));
-        logger.debug("factory reset [" + result + "]");
+        boolean result = Boolean.parseBoolean(shell.executeBroadcastExtended(BLUETOOTH_BROADCAST, FACTORY_RESET));
+        logger.debug("factory reset return [" + result + "]");
         return result;
     }
 
     public BluetoothClass getBluetoothClass() {
-        int result = Integer.parseInt(shell.executeBroadcast(GET_BLUETOOTH_CLASS));
+        int result = Integer.parseInt(shell.executeBroadcastExtended(BLUETOOTH_BROADCAST, GET_BLUETOOTH_CLASS));
         BluetoothClass bluetoothClass = new BluetoothClass(result);
-        logger.debug("get class [" + bluetoothClass + "]");
+        logger.debug("get class return [" + bluetoothClass + "]");
         return bluetoothClass;
     }
 
     public boolean setScanMode(ScanMode scanMode, long duration) {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(SET_SCAN_MODE + scanMode.getScanMode() + "," + duration));
-        logger.debug("set scan mode [" + scanMode + "] duration [" + duration + "]");
+        boolean result = Boolean.parseBoolean(shell.executeBroadcastExtended(BLUETOOTH_BROADCAST, SET_SCAN_MODE, scanMode.getScanMode(), duration));
+        logger.debug("set scan mode [" + scanMode + "] duration [" + duration + "] return [" + result + "]");
         return result;
     }
 
     public int getDiscoverableTimeout() {
-        int result = Integer.parseInt(shell.executeBroadcast(GET_DISCOVERABLE_TIMEOUT));
-        logger.debug("get discoverable timeout [" + result + "]");
+        int result = Integer.parseInt(shell.executeBroadcastExtended(BLUETOOTH_BROADCAST, GET_DISCOVERABLE_TIMEOUT));
+        logger.debug("get discoverable timeout return [" + result + "]");
         return result;
     }
 
     public boolean setDiscoverableTimeout(int seconds) {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(SET_DISCOVERABLE_TIMEOUT + seconds));
-        logger.debug("set discoverable timeout [" + seconds + "]");
+        boolean result = Boolean.parseBoolean(shell.executeBroadcastExtended(BLUETOOTH_BROADCAST, SET_DISCOVERABLE_TIMEOUT, seconds));
+        logger.debug("set discoverable timeout [" + seconds + "] return [" + result + "]");
         return result;
     }
 
     public boolean isDiscovering() {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(IS_DISCOVERING));
-        logger.debug("is discovering [" + result + "]");
+        boolean result = Boolean.parseBoolean(shell.executeBroadcastExtended(BLUETOOTH_BROADCAST, IS_DISCOVERING));
+        logger.debug("is discovering return [" + result + "]");
         return result;
     }
 
 
     public ConnectedState getConnectionState() {
-        ConnectedState connectedState = ConnectedState.getState(Integer.parseInt(shell.executeBroadcast(GET_CONNECTION_STATE)));
-        logger.debug("get connection state [" + connectedState + "]");
+        ConnectedState connectedState = ConnectedState.getState(Integer.parseInt(shell.executeBroadcastExtended(BLUETOOTH_BROADCAST, GET_CONNECTION_STATE)));
+        logger.debug("get connection state return [" + connectedState + "]");
         return connectedState;
     }
 
     public BluetoothProfile.State getProfileConnectionState(BluetoothProfile.Type type) {
         BluetoothProfile.State state = BluetoothProfile.State.getState(
                 Integer.parseInt(
-                        shell.executeBroadcast(GET_PROFILE_CONNECTION_STATE + type.getComstant()
+                        shell.executeBroadcastExtended(BLUETOOTH_BROADCAST, GET_PROFILE_CONNECTION_STATE, type.getComstant()
                         )
                 )
         );
-        logger.debug("get profile [" + type + "] connection state [" + state + "}");
+        logger.debug("get profile [" + type + "] connection state return [" + state + "}");
         return state;
     }
 
     public boolean removePairedDevice(String address) {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcast(REMOVE_PAIRED_DEVICE + address));
-        logger.debug("remove paired device [" + address + "]");
+        boolean result = Boolean.parseBoolean(shell.executeBroadcastExtended(BLUETOOTH_BROADCAST, REMOVE_PAIRED_DEVICE, address));
+        logger.debug("remove paired device [" + address + "] return [" + result + "]");
         return result;
     }
 
@@ -351,7 +353,7 @@ public class BluetoothAdapter extends BaseAdapter {
 
 
     public List<BluetoothProfile.Type> getConnectedProfiles() {
-        String result = shell.executeBroadcast(GET_CONNECTED_PROFILES);
+        String result = shell.executeBroadcastExtended(BLUETOOTH_BROADCAST, GET_CONNECTED_PROFILES);
         List<BluetoothProfile.Type> profiles = new ArrayList<>();
         if (!result.isEmpty()) {
             for (String profile : result.split(",")) {

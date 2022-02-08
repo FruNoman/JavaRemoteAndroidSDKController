@@ -47,7 +47,13 @@ public class DDMLibShell extends Shell {
     }
 
     @Override
-    public String executeBroadcast(String... command) {
+    public String executeBroadcastExtended(String broadcast, String command, Object... params) {
+        StringBuilder commandBuilder = new StringBuilder();
+        commandBuilder.append(broadcast);
+        commandBuilder.append(" --es command " + command);
+        for (int x = 0; x < params.length; x++) {
+            commandBuilder.append(" --es param" + x + " '" + params[x]+"'");
+        }
         if (!execute("pm list packages -3").contains(REMOTE_PACKAGE)) {
             logger.debug("Remote controller apk was not found, installing ...");
             File apk = getApk();
@@ -70,37 +76,19 @@ public class DDMLibShell extends Shell {
             }
             execute("input keyevent KEYCODE_HOME");
         }
-
-        StringBuilder commandBuilder = new StringBuilder();
-        for (String var : command) {
-            commandBuilder.append(var);
-            commandBuilder.append(" ");
-        }
-        CollectingOutputReceiver receiver = new CollectingOutputReceiver();
-        try {
-            iDevice.executeShellCommand(commandBuilder.toString(), receiver, 60, TimeUnit.SECONDS);
-        } catch (TimeoutException e) {
-            e.printStackTrace();
-        } catch (AdbCommandRejectedException e) {
-            e.printStackTrace();
-        } catch (ShellCommandUnresponsiveException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String output = receiver.getOutput();
+        String output = execute(commandBuilder.toString());
         Pattern r = Pattern.compile(ADAPTER_PATTERN);
         Matcher m = r.matcher(output);
         if (m.matches()) {
             if (output.contains("result=" + ERROR_CODE)) {
-                throw new RuntimeException("Broadcast error");
+                throw new RuntimeException(m.group(1));
             } else if (output.contains("result=" + SUCCESS_CODE)) {
                 return m.group(1);
 
             }
         } else if (output.contains("result=" + EMPTY_BROADCAST_CODE)) {
             throw new RuntimeException("Empty broadcast error");
-        }else if(!output.contains("data=\"") && output.contains("result=" + SUCCESS_CODE)){
+        } else if (!output.contains("data=\"") && output.contains("result=" + SUCCESS_CODE)) {
             return "";
         }
         return output;
