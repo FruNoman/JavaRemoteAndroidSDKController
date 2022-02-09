@@ -34,16 +34,10 @@ public class TelecomAdapter extends BaseAdapter {
     private final String GET_MOBILE_PHONE = "getMobilePhone";
     private final String GET_CONTACTS_SIZE = "getContactsSize";
     private final String GET_CALL_HISTORY_SIZE = "getCallHistorySize";
-    private final String SEND_SMS = "sendSMS";
-    private final String IS_SMS_RECEIVED = "isSMSReceived";
     private final String CONTACT_GENERATOR = "contactGeneratorProgram";
-    private final String GET_LAST_SMS_NUMBER = "getLastSMSNumber";
-    private final String GET_LAST_SMS_TEXT = "getLastSMSText";
-    private final String IS_MAP_PROFILE_MESSAGE_RECEIVED = "isMAPProfileMessageReceived";
-    private final String GET_LAST_MAP_PROFILE_SMS_NUMBER = "getLastMAPProfileSMSNumber";
-    private final String GET_LAST_MAP_PROFILE_SMS_TEXT = "getLastMAPProfileSMSText";
 
-    private final String GET_LAST_MAP_PROFILE_SMS_URI = "getLastMAPProfileSMSURI";
+
+
     private final String GET_CONTACT_IMAGE = "getContactImage";
     private final String CREATE_CONTACT = "createContactProgrammatically";
 
@@ -330,16 +324,7 @@ public class TelecomAdapter extends BaseAdapter {
         return result;
     }
 
-    public void sendSMS(String number, String text) {
-        shell.executeBroadcastExtended(TELEPHONY_BROADCAST, SEND_SMS, number, text);
-        logger.debug("send SMS to  [" + number + "] with text [" + text + "]");
-    }
 
-    public boolean isSMSReceived() {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcastExtended(TELEPHONY_BROADCAST, IS_SMS_RECEIVED));
-        logger.debug("is SMS received return [" + result + "]");
-        return result;
-    }
 
     public int getContactsSize() {
         int result = Integer.parseInt(shell.executeBroadcastExtended(TELEPHONY_BROADCAST, GET_CONTACTS_SIZE));
@@ -358,35 +343,7 @@ public class TelecomAdapter extends BaseAdapter {
         logger.debug("generate contacts [" + number + "]");
     }
 
-    public String getLastSMSNumber() {
-        String result = shell.executeBroadcastExtended(TELEPHONY_BROADCAST, GET_LAST_SMS_NUMBER);
-        logger.debug("get last SMS number return [" + result + "]");
-        return result;
-    }
 
-    public String getLastSMSText() {
-        String result = shell.executeBroadcastExtended(TELEPHONY_BROADCAST, GET_LAST_SMS_TEXT);
-        logger.debug("get last SMS text return [" + result + "]");
-        return result;
-    }
-
-    public boolean isMAPProfileMessageReceived() {
-        boolean result = Boolean.parseBoolean(shell.executeBroadcastExtended(TELEPHONY_BROADCAST, IS_MAP_PROFILE_MESSAGE_RECEIVED));
-        logger.debug("is MAP profile message received return [" + result + "]");
-        return result;
-    }
-
-    public String getLastMAPProfileSMSNumber() {
-        String result = shell.executeBroadcastExtended(TELEPHONY_BROADCAST, GET_LAST_MAP_PROFILE_SMS_NUMBER);
-        logger.debug("get last MAP profile SMS number return [" + result + "]");
-        return result;
-    }
-
-    public String getLastMAPProfileSMSText() {
-        String result = shell.executeBroadcastExtended(TELEPHONY_BROADCAST, GET_LAST_MAP_PROFILE_SMS_TEXT);
-        logger.debug("get last MAP profile SMS text return [" + result + "]");
-        return result;
-    }
 
 
 }

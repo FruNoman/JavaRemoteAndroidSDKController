@@ -7,10 +7,8 @@ import org.apache.log4j.Logger;
 
 public class AVRCPAdapter extends BaseAdapter {
     private final String MEDIA_SESSION_REMOTE = "com.github.remotesdk.MEDIA_SESSION_REMOTE";
-    private Logger logger;
-
-
     private final String MEDIA_SESSION_BROADCAST = BROADCAST + MEDIA_SESSION_REMOTE;
+    private Logger logger;
 
 
     private final String TRANSPORT_CONTROL_PLAY = "transportControlPlay";

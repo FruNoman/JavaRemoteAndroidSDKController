@@ -1,13 +1,14 @@
 package com.github.frunoyman.controllers;
 
 import com.android.ddmlib.IDevice;
+import com.github.frunoyman.adapters.audio.AudioManager;
 import com.github.frunoyman.adapters.bluetooth.BluetoothAdapter;
 import com.github.frunoyman.adapters.environment.EnvironmentAdapter;
 import com.github.frunoyman.adapters.environment.RemoteFile;
 import com.github.frunoyman.adapters.location.LocationAdapter;
 import com.github.frunoyman.adapters.player.PlayerAdapter;
 import com.github.frunoyman.adapters.telephony.TelecomAdapter;
-import com.github.frunoyman.adapters.usb.Usb;
+import com.github.frunoyman.adapters.usb.UsbAdapter;
 import com.github.frunoyman.adapters.wifi.WifiAdapter;
 import com.github.frunoyman.shell.DDMLibShell;
 import com.github.frunoyman.shell.Shell;
@@ -46,8 +47,8 @@ public class DDMLibRemoteSdk extends BaseSdk {
     }
 
     @Override
-    public Usb getUsbAdapter() {
-        return new Usb(shell);
+    public UsbAdapter getUsbAdapter() {
+        return new UsbAdapter(shell);
     }
 
     @Override
@@ -58,6 +59,11 @@ public class DDMLibRemoteSdk extends BaseSdk {
     @Override
     public PlayerAdapter getPlayerAdapter() {
         return new PlayerAdapter(shell);
+    }
+
+    @Override
+    public AudioManager getAudioManager() {
+        return new AudioManager(shell);
     }
 
     @Override
